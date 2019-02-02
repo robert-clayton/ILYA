@@ -9,35 +9,26 @@ import glob
 import configparser
 from PIL import Image
 
-CONFIG_FILE     = 'config.ini'
-IMAGES_FOLDER   = 'Images'
-
-
-class Config(configparser.ConfigParser):
+class FileManager(QObject):
     def __init__(self):
         super().__init__()
-        self.read(CONFIG_FILE)
+        self.images_folder = 'Images'
+        self.labels_folder = 'Labels'
         
-    def save(self):
-        with open(CONFIG_FILE, 'w') as cf:
-            self.write(cf)
-            
-    def reload(self):
-        self.read(CONFIG_FILE)
-    
-    def set_mode(self, param):
-        self[] = val
-        self.keyChanged.emit(param)    
 
-    keyChanged = PyObject(object)
-
-
+class Central(QFrame):
+    def __init__(self):
+        super().__init__()
+        
 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.config = Config()
+        central = Central()
+        self.setCentralWidget(central)
+
+        
         
 
 def main():
