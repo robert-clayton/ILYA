@@ -6,11 +6,14 @@ from PySide2.QtGui      import *
 class FolderList(QListView):
     def __init__(self, folder_iterator):
         super().__init__()
+        self.setMinimumWidth(300)
         self.folder_model = QStandardItemModel()
         self.setModel(self.folder_model)
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.setVerticalScrollBar(ScrollBar(self))
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+        self.setStyleSheet('FolderList { background: rgb(30,30,30); color: rgb(190,190,190); }')
 
         for idx, folder in enumerate(folder_iterator):
             item = QStandardItem(folder)
@@ -45,7 +48,7 @@ class ScrollBar(QScrollBar):
             '}'
 
             'ScrollBar::handle:vertical {'
-                'background: rgb(203, 12, 124);'
+                'background: rgb(237,182,234);'
                 'min-height: 20px;'
                 'border-radius: 3px;'
             '}'
