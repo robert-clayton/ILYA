@@ -12,7 +12,8 @@ class Central(QFrame):
     def __init__(self):
         super().__init__()
         # Initiate objects
-        self.layout         = QHBoxLayout(self)
+        self.overall_layout = QHBoxLayout(self)
+        self.selector_layout= QVBoxLayout()
         self.focused_image  = Canvas(image='C:\\Users\\draug\\Desktop\\floof.png')
         self.image_list     = ImageList()
         self.folder_list    = FolderList(fm().get_images_folders())
@@ -20,12 +21,15 @@ class Central(QFrame):
         # Styling
         self.setStyleSheet('Central { background: rgb(30,30,30); }')
         self.folder_list.setMaximumWidth(300)
-        
+        self.overall_layout.setAlignment(Qt.AlignCenter)
+        self.overall_layout.setMargin(0)
+        self.overall_layout.setSpacing(0)
+
         # Layout
-        self.layout.addWidget(self.image_list, 20)
-        self.layout.addWidget(self.focused_image, 60)
-        self.layout.setAlignment(Qt.AlignCenter)
-        self.layout.addWidget(self.folder_list, 20)
+        self.selector_layout.addWidget(self.folder_list, 20)
+        self.selector_layout.addWidget(self.image_list, 80)
+        self.overall_layout.addLayout(self.selector_layout, 30)
+        self.overall_layout.addWidget(self.focused_image, 70)
 
         # Connections
         self.folder_list.currentRowChanged.connect(self.image_list.populate)

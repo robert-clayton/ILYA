@@ -14,7 +14,7 @@ class FileManager():
         yield from filter(lambda f: os.path.isdir(os.path.join(self.images_folder, f)), contents)
 
     def get_image_folder_contents(self, folder):
-        valid_exts = ('.jpg', '.png')
+        valid_exts = ('.jpg', '.jpeg', '.png')
         path = os.path.join(self.images_folder, folder)
         contents = map(lambda f: f.name, os.scandir(path))
         yield from filter(lambda f: any(f.endswith(ext) for ext in valid_exts), contents)

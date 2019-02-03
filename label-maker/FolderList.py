@@ -9,7 +9,7 @@ import os
 class FolderList(QListView):
     def __init__(self, folder_iterator):
         super().__init__()
-        self.setMinimumWidth(300)
+        # self.setMinimumWidth(300)
         self.folder_model = QStandardItemModel()
         self.setModel(self.folder_model)
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
