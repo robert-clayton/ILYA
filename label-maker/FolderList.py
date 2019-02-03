@@ -3,7 +3,7 @@ from PySide2.QtCore     import *
 from PySide2.QtWidgets  import *
 from PySide2.QtGui      import *
 from ScrollBar          import ScrollBar
-from FileManager        import FileManager
+from FileManager        import FileManager as fm
 import os
 
 class FolderList(QListView):
@@ -18,7 +18,6 @@ class FolderList(QListView):
 
         self.setStyleSheet('FolderList { background: rgb(30,30,30); color: rgb(190,190,190); }')
 
-        fm = FileManager()
         for idx, folder in enumerate(folder_iterator):
             item = QStandardItem(folder)
             item.setData(folder.replace('imgur', '').replace('reddit_sub', '').replace('_', ''), role=Qt.DisplayRole)

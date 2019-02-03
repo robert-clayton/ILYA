@@ -4,6 +4,7 @@ from PySide2.QtGui      import *
 from ScrollBar          import ScrollBar
 from FileManager        import FileManager as fm
 import os, copy
+from PIL                import Image
 
 class ImageList(QListView):
     def __init__(self, model = None):
@@ -13,28 +14,31 @@ class ImageList(QListView):
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.setVerticalScrollBar(ScrollBar(self))
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setItemDelegate(Image(self.width()))
         self.setLayoutMode(QListView.Batched)
         self.setBatchSize(10)
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
-        self.setItemDelegate(Image(self.width()))
+        if event.oldSize().width() != event.size().width():
+            self.setItemDelegate(Thumbnail(self.width()))
     
     def populate(self, folder):
         self.populate_thread = Populate(folder)
         self.populate_thread.modelFinished.connect(self.setModel)
         self.populate_thread.start()
 
-class Image(QStyledItemDelegate):
+class Thumbnail(QStyledItemDelegate):
     def __init__(self, width):
         super().__init__()
         self.width = width
 
     def sizeHint(self, option, index):
         item = index.model().data(index, role=Qt.UserRole)
-        image = QPixmap(item).scaledToWidth(self.width)
-        return image.size()
+        with Image.open(item) as img:
+            width, height = img.size
+        dx = self.width / width
+        height *= dx
+        return QSize(self.width, height)
 
     def paint(self, painter, option, index):
         painter.save()
@@ -54,7 +58,7 @@ class Populate(QThread):
         model = QStandardItemModel()
 
         for image in fm().get_image_folder_contents(self.folder.data(role=Qt.UserRole)):
-            url = os.path.join(fm().images_folder, self.folder.data(role=Qt.UserRole), image)
+            url = os.path.join(fm.images_folder, self.folder.data(role=Qt.UserRole), image)
             item = QStandardItem(image)
             item.setData(url, role=Qt.UserRole)
             model.appendRow(item)
