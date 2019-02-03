@@ -25,13 +25,11 @@ class FlowLayout(QLayout):
     def itemAt(self, index):
         if index >= 0 and index < len(self.itemList):
             return self.itemList[index]
-
         return None
 
     def takeAt(self, index):
         if index >= 0 and index < len(self.itemList):
             return self.itemList.pop(index)
-
         return None
 
     def expandingDirections(self):
@@ -53,10 +51,8 @@ class FlowLayout(QLayout):
 
     def minimumSize(self):
         size = QSize()
-
         for item in self.itemList:
             size = size.expandedTo(item.minimumSize())
-
         size += QSize(2 * self.contentsMargins().top(), 2 * self.contentsMargins().top())
         return size
 

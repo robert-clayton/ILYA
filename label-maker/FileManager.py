@@ -2,6 +2,8 @@ from PySide2.QtCore import *
 import os
 
 class FileManager(QObject):
+    '''Handles grabbing files and saving boxes as they are generated'''
+    
     def __init__(self):
         super().__init__()
         self.current_dir    = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
