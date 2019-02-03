@@ -5,16 +5,19 @@ from PySide2.QtGui      import *
 from PySide2.QtWidgets  import *
 from FolderList         import FolderList
 from FlowLayout         import FlowLayout
-from FileManager        import FileManager
+from FileManager        import FileManager as fm
+from ImageList          import ImageList
 from Box                import Box
 
-file_manager = FileManager()
+
 
 class ImageViewer(QFrame):
+    MIN_BOX_SIZE = 0.0025 # percent of image
+
     def __init__(self, label_name = 'Default', image = None):
         super().__init__()
         self.setMinimumSize(QSize(850, 725))
-        self.image = QPixmap(image)
+        self.image = QPixmap(image) if image else None
         self.setStyleSheet('ImageViewer { background: rgb(50,50,50); }')
 
         self.label_name = label_name
@@ -68,10 +71,14 @@ class ImageViewer(QFrame):
         y = max(min(1.0, y), 0.0)
         return (x, y)
     
+    def check_box_valid(self, points):
+        x, y, x2, y2 = points
+        area = abs(x - x2) * abs(y2 - y)
+        return area > self.MIN_BOX_SIZE
+
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
         self.x_press, self.y_press = self.translate_mouse_event_to_percent(event)
-        
         self.drawing = True
         
     def mouseMoveEvent(self, event):
@@ -83,44 +90,36 @@ class ImageViewer(QFrame):
 
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
-        self.drawn_rects.append(self.drawing_rect)
+        if self.check_box_valid(self.drawing_rect):
+            self.drawn_rects.append(self.drawing_rect)
         self.update()
-        self.drawing = False
+        self.drawing = False            
+
+    boxCompleted = Signal(object)
 
 class Central(QFrame):
     def __init__(self):
         super().__init__()
         self.setStyleSheet('Central { background: rgb(30,30,30); }')
         self.layout                 = QHBoxLayout(self)
-        self.folder_images_layout   = FlowLayout()
-        self.focused_image          = ImageViewer(image='C:\\Users\\draug\\Desktop\\floof.png')
-        self.folder_list            = FolderList(file_manager.get_images_folders())
+        self.focused_image  = ImageViewer(image='C:\\Users\\draug\\Desktop\\floof.png')
+        self.image_list     = ImageList()
+        self.folder_list    = FolderList(fm().get_images_folders())
         self.folder_list.setMaximumWidth(300)
         
-        self.layout.addLayout(self.folder_images_layout, 20)
-        self.layout.addWidget(self.focused_image)
+        self.layout.addWidget(self.image_list, 20)
+        self.layout.addWidget(self.focused_image, 60)
         self.layout.setAlignment(Qt.AlignCenter)
-        self.layout.addWidget(self.folder_list)
-
-        self.folder_list.selectedChanged.connect(self.tell)
-
-    def tell(self, param):
-        print(param.data(data=Qt.UserRole))
-
-    def fill_images_layout(self, folder):
-        for image in file_manager.get_image_folder_contents(folder):
-            image = QPixmap(image.scaled())
-            self.folder_images_layout.addWidget()
-
+        self.layout.addWidget(self.folder_list, 20)
+        self.folder_list.currentRowChanged.connect(self.image_list.populate)
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-
         central = Central()
         self.setCentralWidget(central)
         self.setWindowTitle('Label Maker')
-        self.setWindowIcon(QIcon(os.path.join(file_manager.current_dir, 'logo.ico')))
+        self.setWindowIcon(QIcon(os.path.join(fm.current_dir, 'logo.ico')))
 
 def main():
     app = QApplication()

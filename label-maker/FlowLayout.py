@@ -22,6 +22,10 @@ class FlowLayout(QLayout):
     def count(self):
         return len(self.itemList)
 
+    def clear(self):
+        for i in reversed(range(self.count())):
+            self.itemAt(i).widget().setParent(None)
+
     def itemAt(self, index):
         if index >= 0 and index < len(self.itemList):
             return self.itemList[index]
@@ -33,7 +37,7 @@ class FlowLayout(QLayout):
         return None
 
     def expandingDirections(self):
-        return Qt.Orientations(Qt.Vertical | Qt.Horizontal)
+        return Qt.Orientations(Qt.Orientation(0))
 
     def hasHeightForWidth(self):
         return True
