@@ -5,12 +5,12 @@ A tool for labeling bounding boxes on images to be used for ML training.
 # Requirements
 
 - Python 3.x
-- PySide2
-- PIL
 
 # Installation
 
+- Open `cmd` and `cd` into the project folder
 - Run `pip install -r requirements.txt`
+- Run `/label-maker/main.py`
 
 # How To Use
 
