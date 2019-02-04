@@ -53,6 +53,6 @@ class Folder(QStyledItemDelegate):
         painter.save()
         item = index.model().data(index, role=Qt.DisplayRole)
         painter.translate(option.rect.x(), option.rect.y())
-        painter.setFont(QFont('Airal', 10))
+        painter.setFont(QFont('Arial', 10))
         painter.drawText(20,10,item)
         painter.restore()

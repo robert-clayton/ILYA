@@ -2,6 +2,7 @@ from PySide2            import *
 from PySide2.QtCore     import *
 from PySide2.QtWidgets  import *
 from PySide2.QtGui      import *
+import ThemeManager
 
 class ScrollBar(QScrollBar):
     def __init__(self, parent_ref = None, kinetic_scroll = True):
@@ -12,7 +13,7 @@ class ScrollBar(QScrollBar):
         
         self.setStyleSheet(
            'ScrollBar::handle:vertical {'
-                'background: rgba(237,182,234,130);'
+                'background: ' + ThemeManager.ACCENT + ';'
                 'min-height: 20px;'
                 'border-radius: 3px;'
             '}'
@@ -34,8 +35,7 @@ class ScrollBar(QScrollBar):
             'ScrollBar::sub-page:vertical, ScrollBar::add-page:vertical {'
                 'background: none;'
                 'border-radius: 3px;'
-            '}'
-            )
+            '}')
 
     def wheelEvent(self, event):
         if self.kinetic_scroll:

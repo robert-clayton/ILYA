@@ -2,21 +2,45 @@ from PySide2.QtCore     import *
 from PySide2.QtGui      import *
 from PySide2.QtWidgets  import *
 from Box                import Box
+import ThemeManager
 
 class Canvas(QFrame):
     MIN_BOX_SIZE = 0.0025 # percent of image
 
     def __init__(self, label_name = 'Default', image_data = None):
         super().__init__()
-        self.setMinimumSize(QSize(850, 725))
-        self.image_data = image_data
-        self.image = QPixmap(image_data.data(role=Qt.DisplayRole)) if image_data else None
-        self.setStyleSheet('Canvas { background-color: rgba(50,50,50,255); }')
-
+        # Variables
+        self.message = ''
+        self.message_reset_timer = QTimer()
         self.label_name = label_name
+        self.image_data = image_data
         self.drawn_rects  = []
         self.drawing_rect = None
         self.drawing = False
+
+        # Objects
+        self.image = QPixmap(image_data.data(role=Qt.DisplayRole)) if image_data else None
+
+        # Styling
+        self.setMinimumSize(QSize(850, 725))
+        self.setStyleSheet('Canvas { '
+            'background-color: rgba(50,50,50,255);'
+            'border-bottom-right-radius: 15px;'
+            '}')
+        self.message_reset_timer.setInterval(3000)
+        self.message_reset_timer.setSingleShot(True)
+        
+        # Connections
+        self.message_reset_timer.timeout.connect(self.reset_message)
+
+    def set_message(self, param):
+        self.message = param
+        self.update()
+        self.message_reset_timer.start()
+
+    def reset_message(self):
+        self.message = ''
+        self.update()
 
     def change_image(self, new_image_index):
         self.image_data = new_image_index
@@ -30,12 +54,12 @@ class Canvas(QFrame):
         if self.image:
             # Scale image down
             self.scaled_image = self.image.scaled(self.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            
             # Find xy offsets
             self.dx = self.size().width()  - self.scaled_image.size().width()  if self.size().width()  - self.scaled_image.size().width()  else self.scaled_image.size().width()  - self.size().width()
             self.dy = self.size().height() - self.scaled_image.size().height() if self.size().height() - self.scaled_image.size().height() else self.scaled_image.size().height() - self.size().height()
 
             # Paint rescaled image
-            
             painter.setRenderHint(QPainter.HighQualityAntialiasing, True)
             painter.drawPixmap(self.dx / 2, self.dy / 2, self.scaled_image)
 
@@ -59,9 +83,19 @@ class Canvas(QFrame):
                 y2 = (y2 * self.scaled_image.size().height() + self.dy / 2) - 2
                 painter.drawRect(QRect(QPoint(x, y), QPoint(x2, y2)))
 
+        if self.message:
+            pen = QPen()
+            font = QFont('Arial', 20)
+            message_width = QFontMetrics(font).width(self.message)
+            painter.setFont(font)
+            pen.setColor(ThemeManager.ACCENT_QC)
+            painter.setPen(pen)
+            painter.drawText((self.width() - message_width) / 2, self.height() * .9, self.message)
+
         painter.end()
 
     def translate_mouse_event_to_percent(self, event):
+        '''Takes a given mouse event and translates the coordinates into image-relative percentages.'''
         try:
             # Translate mouse event location to percentage
             x = (event.x() - self.dx / 2) / self.scaled_image.size().width()
@@ -75,6 +109,7 @@ class Canvas(QFrame):
             return (0.0,0.0)
     
     def check_box_valid(self, points):
+        '''Calculates total area % of image the box takes. Must be greater than MIN_BOX_SIZE.'''
         x, y, x2, y2 = points
         area = abs(x - x2) * abs(y2 - y)
         return area > self.MIN_BOX_SIZE
@@ -95,6 +130,7 @@ class Canvas(QFrame):
         super().mouseReleaseEvent(event)
         if self.drawing and self.check_box_valid(self.drawing_rect):
             self.drawn_rects.append(self.drawing_rect)
+        self.drawing_rect = None
         self.update()
         self.drawing = False            
 

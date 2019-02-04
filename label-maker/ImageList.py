@@ -61,7 +61,7 @@ class Thumbnail(QStyledItemDelegate):
         painter.save()
         item = index.model().data(index, role=Qt.UserRole)
 
-        # Suppress libpng profile warnings
+        # Suppress some of the libpng profile warnings
         try:
             self.reader.setFileName(item)
             image = QPixmap.fromImageReader(self.reader)
@@ -72,7 +72,7 @@ class Thumbnail(QStyledItemDelegate):
 
         if option.state & (QStyle.State_Selected | QStyle.State_MouseOver):
             painter.setOpacity(1)
-        else: #not option.state & QStyle.State_MouseOver:
+        else:
             painter.setOpacity(0.90)
 
         painter.drawPixmap(0, 0, image)

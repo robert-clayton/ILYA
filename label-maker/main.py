@@ -1,4 +1,5 @@
 import os, sys, json
+import ThemeManager
 from PySide2            import *
 from PySide2.QtCore     import *
 from PySide2.QtGui      import *
@@ -31,7 +32,7 @@ class Central(QFrame):
 
         # Styling
         self.setStyleSheet('Central { '
-                            'background-color: rgba(30,30,30,255); '
+                            'background-color: ' + ThemeManager.BG + ';'
                             'border-top-left-radius:     15px;'
                             'border-bottom-left-radius:  15px;'
                             'border-top-right-radius:    15px;'
@@ -69,8 +70,17 @@ class Central(QFrame):
         self.overall_layout.insertWidget(0, self.top_bar)
 
         # Connections
-        self.folder_list.selectedFolderChanged.connect(self.image_list.populate)
-        self.image_list.selectedImageChanged.connect(self.canvas.change_image)
+        self.folder_list.selectedFolderChanged.connect(self.populate_image_list)
+        self.image_list.selectedImageChanged.connect(self.change_canvas_image)
+
+    def populate_image_list(self, folder):
+        self.image_list.populate(folder)
+        self.canvas.set_message('Switching Folders - {}'.format(folder.data(role=Qt.DisplayRole)))
+
+    def change_canvas_image(self, image):
+        self.canvas.change_image(image)
+        self.canvas.set_message('Switching Images - {}'.format(image.data(role=Qt.DisplayRole)))
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
