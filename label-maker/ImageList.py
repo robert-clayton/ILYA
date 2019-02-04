@@ -35,6 +35,9 @@ class Thumbnail(QStyledItemDelegate):
         self.width  = width
         self.height = None
         self.reader = QImageReader()
+    
+    def set_width(self, param):
+        self.width = param
 
     def sizeHint(self, option, index):
         item = index.model().data(index, role=Qt.UserRole)
@@ -59,7 +62,7 @@ class Thumbnail(QStyledItemDelegate):
         painter.translate(option.rect.x(), option.rect.y())
         painter.setRenderHint(QPainter.HighQualityAntialiasing, True)
 
-        if option.state & QStyle.State_Selected:
+        if option.state & (QStyle.State_Selected | QStyle.State_MouseOver):
             painter.setOpacity(1)
         else: #not option.state & QStyle.State_MouseOver:
             painter.setOpacity(0.90)
