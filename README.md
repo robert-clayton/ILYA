@@ -10,11 +10,10 @@ A tool for labeling bounding boxes on images to be used for ML training.
 
 - Open `cmd` and `cd` into the project folder
 - Run `pip install -r requirements.txt`
-- Run `./label-maker/main.py`
 
 # How To Use
 
-- Put images into either `./Images/` or a subfolder within
+- Put images into a subfolder within `./Images/`
 - Run app with `python3 main.py`
 - Select the folder you want to label
 - Press the `Load Images` button to begin
