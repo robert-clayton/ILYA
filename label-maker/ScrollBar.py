@@ -12,10 +12,10 @@ class ScrollBar(QScrollBar):
         
         self.setStyleSheet(
            'ScrollBar::handle:vertical {'
-                            'background: rgb(237,182,234);'
-                            'min-height: 20px;'
-                            'border-radius: 3px;'
-                        '}'
+                'background: rgba(237,182,234,130);'
+                'min-height: 20px;'
+                'border-radius: 3px;'
+            '}'
             'ScrollBar:up-arrow:vertical, ScrollBar::down-arrow:vertical {'
                 'color: none;'
                 'border: none;'

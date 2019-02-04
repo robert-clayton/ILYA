@@ -38,7 +38,6 @@ class Central(QFrame):
                             'border-bottom-right-radius: 15px;'
                             'border-width: 0px;'
                             'border-style: solid; }')
-
         self.overall_layout.setMargin(0)
         self.overall_layout.setSpacing(0)
         self.content_layout.setAlignment(Qt.AlignCenter)
