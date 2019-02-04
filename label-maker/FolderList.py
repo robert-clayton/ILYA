@@ -2,7 +2,6 @@ from PySide2            import *
 from PySide2.QtCore     import *
 from PySide2.QtWidgets  import *
 from PySide2.QtGui      import *
-from ScrollBar          import ScrollBar
 from FileManager        import FileManager as fm
 import os
 
@@ -13,10 +12,11 @@ class FolderList(QListView):
         self.setModel(self.folder_model)
         self.setFrameStyle(QFrame.NoFrame)
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.setVerticalScrollBar(ScrollBar(self))
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
-        self.setStyleSheet('FolderList { background: rgb(30,30,30); color: rgb(190,190,190); }')
+        self.setStyleSheet('FolderList { background-color: Transparent; color: rgb(190,190,190); }')
+        self.setAttribute(Qt.WA_TranslucentBackground)
 
         for idx, folder in enumerate(folder_iterator):
             item = QStandardItem(folder)
@@ -25,17 +25,17 @@ class FolderList(QListView):
 
             self.folder_model.appendRow(item)
 
-        self.selectionModel().currentRowChanged.connect(self.changed)
-
     def resizeEvent(self, event):
         super().resizeEvent(event)
         if event.oldSize().width() != event.size().width():
             self.setItemDelegate(Folder(self.width()))
 
-    def changed(self, selected, deselected):
-        self.currentRowChanged.emit(selected)
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            index = self.indexAt(event.pos())
+            self.selectedFolderChanged.emit(index)
 
-    currentRowChanged = Signal(object)
+    selectedFolderChanged = Signal(object)
 
 class Folder(QStyledItemDelegate):
     def __init__(self, width, height=20):
@@ -54,7 +54,5 @@ class Folder(QStyledItemDelegate):
         item = index.model().data(index, role=Qt.DisplayRole)
         painter.translate(option.rect.x(), option.rect.y())
         painter.setFont(QFont('Airal', 10))
-        painter.drawText(0,0,item)
-
-
+        painter.drawText(20,10,item)
         painter.restore()

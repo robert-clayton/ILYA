@@ -6,18 +6,26 @@ from Box                import Box
 class Canvas(QFrame):
     MIN_BOX_SIZE = 0.0025 # percent of image
 
-    def __init__(self, label_name = 'Default', image = None):
+    def __init__(self, label_name = 'Default', image_data = None):
         super().__init__()
         self.setMinimumSize(QSize(850, 725))
-        self.image = QPixmap(image) if image else None
-        self.setStyleSheet('Canvas { background: rgb(50,50,50); }')
+        self.image_data = image_data
+        self.image = QPixmap(image_data.data(role=Qt.DisplayRole)) if image_data else None
+        self.setStyleSheet('Canvas { background-color: rgba(50,50,50,255); }')
 
         self.label_name = label_name
         self.drawn_rects  = []
         self.drawing_rect = None
         self.drawing = False
 
+    def change_image(self, new_image_index):
+        self.image_data = new_image_index
+        self.image = QPixmap(new_image_index.data(role=Qt.UserRole))
+        self.update()
+
     def paintEvent(self, event):
+        painter = QPainter(self)
+
         # If image is set
         if self.image:
             # Scale image down
@@ -27,7 +35,7 @@ class Canvas(QFrame):
             self.dy = self.size().height() - self.scaled_image.size().height() if self.size().height() - self.scaled_image.size().height() else self.scaled_image.size().height() - self.size().height()
 
             # Paint rescaled image
-            painter = QPainter(self)
+            
             painter.setRenderHint(QPainter.HighQualityAntialiasing, True)
             painter.drawPixmap(self.dx / 2, self.dy / 2, self.scaled_image)
 
@@ -51,17 +59,20 @@ class Canvas(QFrame):
                 y2 = (y2 * self.scaled_image.size().height() + self.dy / 2) - 2
                 painter.drawRect(QRect(QPoint(x, y), QPoint(x2, y2)))
 
-            painter.end()
+        painter.end()
 
     def translate_mouse_event_to_percent(self, event):
-        # Translate mouse event location to percentage
-        x = (event.x() - self.dx / 2) / self.scaled_image.size().width()
-        y = (event.y() - self.dy / 2) / self.scaled_image.size().height()
+        try:
+            # Translate mouse event location to percentage
+            x = (event.x() - self.dx / 2) / self.scaled_image.size().width()
+            y = (event.y() - self.dy / 2) / self.scaled_image.size().height()
 
-        # Cap to max and min
-        x = max(min(1.0, x), 0.0)
-        y = max(min(1.0, y), 0.0)
-        return (x, y)
+            # Cap to max and min
+            x = max(min(1.0, x), 0.0)
+            y = max(min(1.0, y), 0.0)
+            return (x, y)
+        except:
+            return (0.0,0.0)
     
     def check_box_valid(self, points):
         x, y, x2, y2 = points
@@ -82,7 +93,7 @@ class Canvas(QFrame):
 
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
-        if self.check_box_valid(self.drawing_rect):
+        if self.drawing and self.check_box_valid(self.drawing_rect):
             self.drawn_rects.append(self.drawing_rect)
         self.update()
         self.drawing = False            

@@ -1,7 +1,6 @@
 from PySide2.QtWidgets  import *
 from PySide2.QtCore     import *
 from PySide2.QtGui      import *
-from ScrollBar          import ScrollBar
 from FileManager        import FileManager as fm
 import os, copy
 from PIL                import Image
@@ -13,9 +12,11 @@ class ImageList(QListView):
         if model: self.setModel(model)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setFrameStyle(QFrame.NoFrame)
+        self.setStyleSheet('background-color: Transparent;')
+        self.setAttribute(Qt.WA_TranslucentBackground)
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.setVerticalScrollBar(ScrollBar(self))
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setLayoutMode(QListView.Batched)
         self.setBatchSize(10)
 
@@ -28,6 +29,13 @@ class ImageList(QListView):
         self.populate_thread = Populate(folder)
         self.populate_thread.modelFinished.connect(self.setModel)
         self.populate_thread.start()
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            index = self.indexAt(event.pos())
+            self.selectedImageChanged.emit(index)
+    
+    selectedImageChanged = Signal(object)
 
 class Thumbnail(QStyledItemDelegate):
     def __init__(self, width):
@@ -68,7 +76,6 @@ class Thumbnail(QStyledItemDelegate):
             painter.setOpacity(0.90)
 
         painter.drawPixmap(0, 0, image)
-
         painter.restore()
 
 class Populate(QThread):
