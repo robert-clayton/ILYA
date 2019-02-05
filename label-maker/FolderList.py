@@ -6,10 +6,10 @@ from FileManager        import FileManager as fm
 import os
 
 class FolderList(QListView):
-    def __init__(self, folder_iterator):
+    def __init__(self, folderIterator):
         super().__init__()
-        self.folder_model = QStandardItemModel()
-        self.setModel(self.folder_model)
+        self.folderModel = QStandardItemModel()
+        self.setModel(self.folderModel)
         self.setFrameStyle(QFrame.NoFrame)
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -18,12 +18,12 @@ class FolderList(QListView):
         self.setStyleSheet('FolderList { background-color: Transparent; color: rgb(190,190,190); }')
         self.setAttribute(Qt.WA_TranslucentBackground)
 
-        for idx, folder in enumerate(folder_iterator):
+        for idx, folder in enumerate(folderIterator):
             item = QStandardItem(folder)
             item.setData(folder.replace('imgur', '').replace('reddit_sub', '').replace('_', ''), role=Qt.DisplayRole)
-            item.setData(os.path.join(fm.current_dir, fm.images_folder, folder), role=Qt.UserRole)
+            item.setData(os.path.join(fm.currentDir, fm.imagesFolder, folder), role=Qt.UserRole)
 
-            self.folder_model.appendRow(item)
+            self.folderModel.appendRow(item)
 
     def resizeEvent(self, event):
         super().resizeEvent(event)

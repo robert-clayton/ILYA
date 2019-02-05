@@ -4,7 +4,6 @@ from PySide2.QtGui      import *
 from FileManager        import FileManager as fm
 import os, copy
 from PIL                import Image
-import time
 
 class ImageList(QListView):
     def __init__(self, model = None):
@@ -26,9 +25,9 @@ class ImageList(QListView):
             self.setItemDelegate(Thumbnail(self.width()))
     
     def populate(self, folder):
-        self.populate_thread = Populate(folder)
-        self.populate_thread.modelFinished.connect(self.setModel)
-        self.populate_thread.start()
+        self.populateThread = Populate(folder)
+        self.populateThread.modelFinished.connect(self.setModel)
+        self.populateThread.start()
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -40,20 +39,20 @@ class ImageList(QListView):
 class Thumbnail(QStyledItemDelegate):
     def __init__(self, width):
         super().__init__()
-        self.width  = width
+        self.thumbnailWidth = width
         self.height = None
         self.reader = QImageReader()
     
-    def set_width(self, param):
-        self.width = param
+    def setThumbnailWidth(self, param):
+        self.thumbnailWidth = param
 
     def sizeHint(self, option, index):
         item = index.model().data(index, role=Qt.UserRole)
         with Image.open(item) as img:
             width, height = img.size
-        dx = self.width / width
+        dx = self.thumbnailWidth / width
         self.height = height * dx
-        size = QSize(self.width, self.height)
+        size = QSize(self.thumbnailWidth, self.height)
         self.reader.setScaledSize(size)
         return size
 
@@ -86,8 +85,8 @@ class Populate(QThread):
     def run(self):
         model = QStandardItemModel()
 
-        for image in fm().get_image_folder_contents(self.folder.data(role=Qt.UserRole)):
-            url = os.path.join(fm.images_folder, self.folder.data(role=Qt.UserRole), image)
+        for image in fm().getImageFolderContents(self.folder.data(role=Qt.UserRole)):
+            url = os.path.join(fm.imagesFolder, self.folder.data(role=Qt.UserRole), image)
             item = QStandardItem(image)
             item.setData(url, role=Qt.UserRole)
             model.appendRow(item)

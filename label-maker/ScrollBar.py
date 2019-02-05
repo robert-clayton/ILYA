@@ -5,11 +5,11 @@ from PySide2.QtGui      import *
 import ThemeManager
 
 class ScrollBar(QScrollBar):
-    def __init__(self, parent_ref = None, kinetic_scroll = True):
-        super().__init__(parent_ref)
-        self.kinetic_scroll = kinetic_scroll
-        if parent_ref and kinetic_scroll: 
-            parent_ref.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
+    def __init__(self, parentRef = None, kineticScroll = True):
+        super().__init__(parentRef)
+        self.kineticScroll = kineticScroll
+        if parentRef and kineticScroll: 
+            parentRef.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
         
         self.setStyleSheet(
            'ScrollBar::handle:vertical {'
@@ -38,20 +38,19 @@ class ScrollBar(QScrollBar):
             '}')
 
     def wheelEvent(self, event):
-        if self.kinetic_scroll:
+        if self.kineticScroll:
             dy = event.angleDelta().y() / 2
             try:
-                dy += self.scroll_animation.currentValue() - self.scroll_animation.endValue()
+                dy += self.scrollAnimation.currentValue() - self.scrollAnimation.endValue()
             except:
                 pass
 
-            self.lerp_curve = QEasingCurve(QEasingCurve.InOutQuad)
-            self.scroll_animation = QPropertyAnimation(self, b'value')
-            
-            self.scroll_animation.setDuration(100)
-            self.scroll_animation.setEasingCurve(self.lerp_curve)
-            self.scroll_animation.setStartValue(self.value())
-            self.scroll_animation.setEndValue(self.value() - dy)
-            self.scroll_animation.start()
+            self.lerpCurve = QEasingCurve(QEasingCurve.InOutQuad)
+            self.scrollAnimation = QPropertyAnimation(self, b'value')
+            self.scrollAnimation.setDuration(100)
+            self.scrollAnimation.setEasingCurve(self.lerpCurve)
+            self.scrollAnimation.setStartValue(self.value())
+            self.scrollAnimation.setEndValue(self.value() - dy)
+            self.scrollAnimation.start()
         else:
             super().wheelEvent(event)

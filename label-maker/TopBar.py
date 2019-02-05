@@ -10,15 +10,14 @@ class TopBar(QFrame):
     def __init__(self):
         super().__init__()
         # Movement logic vars
-        self.mouse_move_pos     = self.window().pos()
-        self.mouse_press_pos    = self.window().pos()
-        self.can_move           = False
-        self.dragging_threshold = 5
+        self.mouseMovePos     = self.window().pos()
+        self.mousePressPos    = self.window().pos()
+        self.draggingThreshold= 5
         
         # Objects
-        self.drop_shadow    = QGraphicsDropShadowEffect(self)
+        self.dropShadow     = QGraphicsDropShadowEffect(self)
         self.icon           = QLabel()
-        self.icon_reader    = QImageReader()
+        self.iconReader     = QImageReader()
         self.minimize       = Button('Minimize')
         self.close          = Button('Close')
         self.layout         = QHBoxLayout(self)
@@ -37,43 +36,38 @@ class TopBar(QFrame):
                             'border-width: 0px;'
                             'border-style: solid; }')
         self.setMinimumHeight(50)
-        self.icon_reader.setScaledSize(QSize(20,20))
-        self.icon_reader.setFileName(os.path.join(fm.current_dir, 'logo.ico'))
-        self.icon.setPixmap(QPixmap.fromImage(self.icon_reader.read()))
-        self.drop_shadow.setOffset(QPointF(0,5))
-        self.drop_shadow.setColor(QColor(30,30,30,100))
-        self.drop_shadow.setBlurRadius(10)
-        self.setGraphicsEffect(self.drop_shadow)
+        self.iconReader.setScaledSize(QSize(20,20))
+        self.iconReader.setFileName(os.path.join(fm.currentDir, 'logo.ico'))
+        self.icon.setPixmap(QPixmap.fromImage(self.iconReader.read()))
+        self.dropShadow.setOffset(QPointF(0,5))
+        self.dropShadow.setColor(QColor(30,30,30,100))
+        self.dropShadow.setBlurRadius(10)
+        self.setGraphicsEffect(self.dropShadow)
         self.layout.setContentsMargins(20,0,20,0)
         self.layout.setSpacing(10)
         self.layout.setAlignment(Qt.AlignVCenter)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
-            self.mouse_press_pos = self.window().pos()
-            self.mouse_move_pos = event.globalPos()
-            self.can_move       = True
+            self.mousePressPos = self.window().pos()
+            self.mouseMovePos = event.globalPos()
         super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
-        move_dist = (event.globalPos() - self.mouse_move_pos).manhattanLength()
-        if self.can_move and move_dist > self.dragging_threshold:            
-            self.window().move(self.mouse_press_pos + event.globalPos() - self.mouse_move_pos)
+        moveDist = (event.globalPos() - self.mouseMovePos).manhattanLength()
+        if moveDist > self.draggingThreshold:
+            self.window().move(self.mousePressPos + event.globalPos() - self.mouseMovePos)
         super().mouseMoveEvent(event)
 
-    def mouseReleaseEvent(self, event):
-        self.can_move = False
-        super().mouseReleaseEvent(event)
-
 class Button(QFrame):
-    def __init__(self, button_type):
+    def __init__(self, buttonType):
         super().__init__()
         # Variables
-        self.button_type = button_type
+        self.buttonType = buttonType
 
         # Objects
         self.layout = QHBoxLayout(self)
-        self.label = QLabel(button_type)
+        self.label = QLabel(buttonType)
         
         # Layout
         self.layout.addWidget(self.label)
@@ -92,7 +86,7 @@ class Button(QFrame):
         super().leaveEvent(event)
 
     def mousePressEvent(self, event):
-        if self.button_type == 'Minimize':
+        if self.buttonType == 'Minimize':
             self.window().showMinimized()
-        elif self.button_type == 'Close':
+        elif self.buttonType == 'Close':
             self.window().close()
