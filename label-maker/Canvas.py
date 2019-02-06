@@ -3,6 +3,7 @@ from PySide2.QtGui      import *
 from PySide2.QtWidgets  import *
 from Box                import Box
 import ThemeManager
+from DeletePopup        import ConfirmDelete
 
 class Canvas(QFrame):
     MIN_BOX_SIZE = 0.0025 # percent of image
@@ -42,7 +43,7 @@ class Canvas(QFrame):
         self.message = ''
         self.update()
 
-    def change_image(self, newImageIndex):
+    def changeImage(self, newImageIndex):
         self.imageData = newImageIndex
         self.image = QPixmap(newImageIndex.data(role=Qt.UserRole))
         self.update()
@@ -94,7 +95,7 @@ class Canvas(QFrame):
 
         painter.end()
 
-    def translate_mouse_event_to_percent(self, event):
+    def translateMousePosToPercent(self, event):
         '''Takes a given mouse event and translates the coordinates into image-relative percentages.'''
         try:
             # Translate mouse event location to percentage
@@ -110,28 +111,49 @@ class Canvas(QFrame):
     
     def checkBoxValid(self, points):
         '''Calculates total area % of image the box takes. Must be greater than MIN_BOX_SIZE.'''
-        x, y, x2, y2 = points
-        area = abs(x - x2) * abs(y2 - y)
-        return area > self.MIN_BOX_SIZE
+        try:
+            x, y, x2, y2 = points
+            area = abs(x - x2) * abs(y2 - y)
+            return area > self.MIN_BOX_SIZE
+        except TypeError:
+            return False
 
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
-        self.xPress, self.yPress = self.translate_mouse_event_to_percent(event)
-        self.drawing = True
+        if event.button() is Qt.LeftButton:
+            self.xPress, self.yPress = self.translateMousePosToPercent(event)
+            self.drawing = True
         
     def mouseMoveEvent(self, event):
         super().mouseMoveEvent(event)
         if self.drawing:
-            self.xMove, self.yMove = self.translate_mouse_event_to_percent(event)
+            self.xMove, self.yMove = self.translateMousePosToPercent(event)
             self.drawingRect = (self.xPress, self.yPress, self.xMove, self.yMove)
             self.update()
 
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
-        if self.drawing and self.checkBoxValid(self.drawingRect):
-            self.drawnRects.append(self.drawingRect)
-        self.drawingRect = None
-        self.update()
-        self.drawing = False            
+        if event.button() is Qt.LeftButton:
+            if self.drawing and self.checkBoxValid(self.drawingRect):
+                self.drawnRects.append(self.drawingRect)
+            self.drawingRect = None
+            self.update()
+            self.drawing = False
+        elif event.button() is Qt.RightButton:
+            self.createConfirmDialog()
+
+    def createConfirmDialog(self):
+        confirmDelete = ConfirmDelete(self)
+        confirmDelete.confirmed.connect(self.requestDelete)
+        
+        
+
+        confirmDelete.exec_()
+
+        
+
+    def requestDelete(self):
+        self.deleteRequested.emit(self.imageData)
 
     boxCompleted = Signal(object)
+    deleteRequested = Signal(object)

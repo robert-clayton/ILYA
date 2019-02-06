@@ -26,5 +26,6 @@ class FileManager():
         except:
             return []
 
-    def deleteImage(self, imgName):
-        os.remove(os.path.join(self.imagesFolder, imgName))
+    def deleteImage(self, imgData):
+        os.remove(imgData.data(role=Qt.UserRole))
+        imgData.model().removeRow(imgData.row())

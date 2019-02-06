@@ -15,6 +15,7 @@ class Central(QFrame):
     def __init__(self):
         super().__init__()
         # Initiate objects
+        self.fileManager    = fm()
         self.overallLayout  = QVBoxLayout(self)
         self.topBar         = TopBar()
         self.contentLayout  = QHBoxLayout()
@@ -22,7 +23,7 @@ class Central(QFrame):
         self.selectorLayout = QVBoxLayout(self.selectorArea)
         self.folderArea     = QFrame()
         self.folderLayout   = QHBoxLayout(self.folderArea)
-        self.folderList     = FolderList(fm().getImagesFolders())
+        self.folderList     = FolderList(self.fileManager.getImagesFolders())
         self.folderBar      = ScrollBar(self.folderList)
         self.canvas         = Canvas()
         self.imageArea      = QFrame()
@@ -72,15 +73,15 @@ class Central(QFrame):
         # Connections
         self.folderList.selectedFolderChanged.connect(self.populateImageList)
         self.imageList.selectedImageChanged.connect(self.changeCanvasImage)
+        self.canvas.deleteRequested.connect(self.fileManager.deleteImage)
 
     def populateImageList(self, folder):
         self.imageList.populate(folder)
         self.canvas.setMessage('Switching Folders - {}'.format(folder.data(role=Qt.DisplayRole)))
 
     def changeCanvasImage(self, image):
-        self.canvas.change_image(image)
+        self.canvas.changeImage(image)
         self.canvas.setMessage('Switching Images - {}'.format(image.data(role=Qt.DisplayRole)))
-
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -89,7 +90,6 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central)
         self.setWindowTitle('Label Maker')
         self.setWindowIcon(QIcon(os.path.join(fm.currentDir, 'logo.ico')))
-
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
 
