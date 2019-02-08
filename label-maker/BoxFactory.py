@@ -1,3 +1,16 @@
+import pandas as pd
+
+class BoxFactory():
+    '''Handles boxes---rows---in general: saving, loading, parsing'''
+    def __init__(self):
+        self.oldBoxes = []
+        self.newBoxes = []
+        self.csvFile = None
+        
+    
+    def loadCSV(self, csvFile=None):
+        if not csvFile: csvFile = self.csvFile
+
 class Box():
     '''A single row of the generated dataset'''
 

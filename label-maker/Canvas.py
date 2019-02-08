@@ -1,11 +1,12 @@
 from PySide2.QtCore     import *
 from PySide2.QtGui      import *
 from PySide2.QtWidgets  import *
-from Box                import Box
+from BoxFactory         import BoxFactory
 import ThemeManager
 from DeletePopup        import ConfirmDelete
 
 class Canvas(QFrame):
+    '''Takes care of showing the currently focused image and the main app use case of creating labels'''
     MIN_BOX_SIZE = 0.0025 # percent of image
 
     def __init__(self, labelName = 'Default', imageData = None):
@@ -145,12 +146,7 @@ class Canvas(QFrame):
     def createConfirmDialog(self):
         confirmDelete = ConfirmDelete(self)
         confirmDelete.confirmed.connect(self.requestDelete)
-        
-        
-
         confirmDelete.exec_()
-
-        
 
     def requestDelete(self):
         self.deleteRequested.emit(self.imageData)

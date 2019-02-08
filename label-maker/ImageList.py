@@ -1,9 +1,9 @@
+import os, copy
+import FileManager
+from PIL                import Image
 from PySide2.QtWidgets  import *
 from PySide2.QtCore     import *
 from PySide2.QtGui      import *
-from FileManager        import FileManager as fm
-import os, copy
-from PIL                import Image
 
 class ImageList(QListView):
     def __init__(self, model = None):
@@ -29,7 +29,7 @@ class ImageList(QListView):
         self.populateThread.modelFinished.connect(self.setModel)
         self.populateThread.start()
 
-    def mousePressEvent(self, event):
+    def mouseReleaseEvent(self, event):
         if event.button() == Qt.LeftButton:
             index = self.indexAt(event.pos())
             self.selectedImageChanged.emit(index)
@@ -37,6 +37,8 @@ class ImageList(QListView):
     selectedImageChanged = Signal(object)
 
 class Thumbnail(QStyledItemDelegate):
+    '''Styled Item Delegate paints images directly to the List View at the desired resolution'''
+    
     def __init__(self, width):
         super().__init__()
         self.thumbnailWidth = width
@@ -78,6 +80,8 @@ class Thumbnail(QStyledItemDelegate):
         painter.restore()
 
 class Populate(QThread):
+    '''Worker to populate a Standard Item Model off of the GUI thread'''
+
     def __init__(self, folder):
         super().__init__()
         self.folder = folder
@@ -85,8 +89,8 @@ class Populate(QThread):
     def run(self):
         model = QStandardItemModel()
 
-        for image in fm().getImageFolderContents(self.folder.data(role=Qt.UserRole)):
-            url = os.path.join(fm.imagesFolder, self.folder.data(role=Qt.UserRole), image)
+        for image in FileManager.getImageFolderContents(self.folder.data(role=Qt.UserRole)):
+            url = os.path.join(FileManager.imagesFolder, self.folder.data(role=Qt.UserRole), image)
             item = QStandardItem(image)
             item.setData(url, role=Qt.UserRole)
             model.appendRow(item)

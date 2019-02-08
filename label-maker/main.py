@@ -1,5 +1,5 @@
 import os, sys, json
-import ThemeManager
+import ThemeManager, FileManager
 from PySide2            import *
 from PySide2.QtCore     import *
 from PySide2.QtGui      import *
@@ -9,13 +9,13 @@ from FolderList         import FolderList
 from ImageList          import ImageList
 from ScrollBar          import ScrollBar
 from Canvas             import Canvas
-from FileManager        import FileManager as fm
 
 class Central(QFrame):
+    '''Initializes, styles, and connects the various classes'''
+
     def __init__(self):
         super().__init__()
         # Initiate objects
-        self.fileManager    = fm()
         self.overallLayout  = QVBoxLayout(self)
         self.topBar         = TopBar()
         self.contentLayout  = QHBoxLayout()
@@ -23,7 +23,7 @@ class Central(QFrame):
         self.selectorLayout = QVBoxLayout(self.selectorArea)
         self.folderArea     = QFrame()
         self.folderLayout   = QHBoxLayout(self.folderArea)
-        self.folderList     = FolderList(self.fileManager.getImagesFolders())
+        self.folderList     = FolderList()
         self.folderBar      = ScrollBar(self.folderList)
         self.canvas         = Canvas()
         self.imageArea      = QFrame()
@@ -73,7 +73,7 @@ class Central(QFrame):
         # Connections
         self.folderList.selectedFolderChanged.connect(self.populateImageList)
         self.imageList.selectedImageChanged.connect(self.changeCanvasImage)
-        self.canvas.deleteRequested.connect(self.fileManager.deleteImage)
+        self.canvas.deleteRequested.connect(FileManager.deleteImage)
 
     def populateImageList(self, folder):
         self.imageList.populate(folder)
@@ -89,7 +89,7 @@ class MainWindow(QMainWindow):
         central = Central()
         self.setCentralWidget(central)
         self.setWindowTitle('Label Maker')
-        self.setWindowIcon(QIcon(os.path.join(fm.currentDir, 'logo.ico')))
+        self.setWindowIcon(QIcon(FileManager.iconPath))
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
 

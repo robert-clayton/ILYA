@@ -1,12 +1,12 @@
+import os
+import FileManager, ThemeManager
 from PySide2            import *
 from PySide2.QtCore     import *
 from PySide2.QtGui      import *
 from PySide2.QtWidgets  import *
-from FileManager        import FileManager as fm
-import ThemeManager
-import os
 
 class TopBar(QFrame):
+    '''Interactable bar at the top of the application'''
     def __init__(self):
         super().__init__()
         # Movement logic vars
@@ -37,7 +37,7 @@ class TopBar(QFrame):
                             'border-style: solid; }')
         self.setMinimumHeight(50)
         self.iconReader.setScaledSize(QSize(20,20))
-        self.iconReader.setFileName(os.path.join(fm.currentDir, 'logo.ico'))
+        self.iconReader.setFileName(FileManager.iconPath)
         self.icon.setPixmap(QPixmap.fromImage(self.iconReader.read()))
         self.dropShadow.setOffset(QPointF(0,5))
         self.dropShadow.setColor(QColor(30,30,30,100))
@@ -60,6 +60,7 @@ class TopBar(QFrame):
         super().mouseMoveEvent(event)
 
 class Button(QFrame):
+    '''Holds the various functionality requirements a top bar's button would need'''
     def __init__(self, buttonType):
         super().__init__()
         # Variables
