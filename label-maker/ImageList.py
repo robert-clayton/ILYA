@@ -38,7 +38,7 @@ class ImageList(QListView):
 
 class Thumbnail(QStyledItemDelegate):
     '''Styled Item Delegate paints images directly to the List View at the desired resolution'''
-    
+
     def __init__(self, width):
         super().__init__()
         self.thumbnailWidth = width
@@ -86,10 +86,16 @@ class Populate(QThread):
         super().__init__()
         self.folder = folder
 
+    def getImageFolderContents(self, folder):
+        validExts = ('.jpg', '.jpeg', '.png')
+        path = os.path.join(FileManager.imagesFolder, folder)
+        contents = map(lambda f: f.name, os.scandir(path))
+        yield from filter(lambda f: any(f.endswith(ext) for ext in validExts), contents)
+
     def run(self):
         model = QStandardItemModel()
 
-        for image in FileManager.getImageFolderContents(self.folder.data(role=Qt.UserRole)):
+        for image in self.getImageFolderContents(self.folder.data(role=Qt.UserRole)):
             url = os.path.join(FileManager.imagesFolder, self.folder.data(role=Qt.UserRole), image)
             item = QStandardItem(image)
             item.setData(url, role=Qt.UserRole)

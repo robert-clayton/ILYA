@@ -2,8 +2,8 @@ from PySide2.QtCore     import *
 from PySide2.QtGui      import *
 from PySide2.QtWidgets  import *
 from BoxFactory         import BoxFactory
-import ThemeManager
 from DeletePopup        import ConfirmDelete
+import ThemeManager
 
 class Canvas(QFrame):
     '''Takes care of showing the currently focused image and the main app use case of creating labels'''
@@ -145,11 +145,12 @@ class Canvas(QFrame):
 
     def createConfirmDialog(self):
         confirmDelete = ConfirmDelete(self)
-        confirmDelete.confirmed.connect(self.requestDelete)
+        confirmDelete.confirmed.connect(self.deleteImage)
         confirmDelete.exec_()
 
-    def requestDelete(self):
-        self.deleteRequested.emit(self.imageData)
+    def deleteImage(self):
+        os.remove(self.imgData.data(role=Qt.UserRole))
+        imgData.model().removeRow(self.imgData.row())
 
-    boxCompleted = Signal(object)
+    boxCompleted    = Signal(object)
     deleteRequested = Signal(object)

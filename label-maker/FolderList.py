@@ -18,12 +18,16 @@ class FolderList(QListView):
         self.setStyleSheet('FolderList { background-color: Transparent; color: rgb(190,190,190); }')
         self.setAttribute(Qt.WA_TranslucentBackground)
 
-        for idx, folder in enumerate(FileManager.getImageFolders()):
+        for idx, folder in enumerate(self.getImageFolders()):
             item = QStandardItem(folder)
             item.setData(folder.replace('imgur', '').replace('reddit_sub', '').replace('_', ''), role=Qt.DisplayRole)
             item.setData(os.path.join(FileManager.imagesFolder, folder), role=Qt.UserRole)
 
             self.folderModel.appendRow(item)
+
+    def getImageFolders(self):
+        contents = map(lambda f: f.name, os.scandir(FileManager.imagesFolder))
+        yield from filter(lambda f: os.path.isdir(os.path.join(FileManager.imagesFolder, f)), contents)
 
     def resizeEvent(self, event):
         super().resizeEvent(event)

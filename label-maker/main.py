@@ -73,7 +73,6 @@ class Central(QFrame):
         # Connections
         self.folderList.selectedFolderChanged.connect(self.populateImageList)
         self.imageList.selectedImageChanged.connect(self.changeCanvasImage)
-        self.canvas.deleteRequested.connect(FileManager.deleteImage)
 
     def populateImageList(self, folder):
         self.imageList.populate(folder)

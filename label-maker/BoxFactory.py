@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 class BoxFactory():
     '''Handles boxes---rows---in general: saving, loading, parsing'''
     def __init__(self):

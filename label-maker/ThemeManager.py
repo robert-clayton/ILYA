@@ -7,5 +7,5 @@ ACCENT      = 'rgba(237,182,234,255)'
 BG          = 'rgba(30,30,30,255)'
 BG_L1       = 'rgba(40,40,40,255)'
 
-ACCENT_QC   = QColor(237,182,234,255)
+ACCENT_QC               = QColor(237,182,234,255)
 ACCENT_LOW_OPACITY_QC   = QColor(237,182,234,70)
