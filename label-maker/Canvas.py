@@ -28,7 +28,6 @@ class Canvas(QFrame):
         self.setMinimumSize(QSize(850, 725))
         self.setStyleSheet('Canvas { '
             'background-color: rgba(50,50,50,255);'
-            'border-bottom-right-radius: 15px;'
             '}')
         self.messageResetTimer.setInterval(3000)
         self.messageResetTimer.setSingleShot(True)

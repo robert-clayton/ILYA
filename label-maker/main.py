@@ -1,15 +1,14 @@
-import os, sys, json
-import ThemeManager, FileManager
-from PySide2            import *
-from PySide2.QtCore     import *
-from PySide2.QtGui      import *
-from PySide2.QtWidgets  import *
+import ThemeManager
+from PySide2.QtCore     import Signal, Qt
+from PySide2.QtGui      import QIcon
+from PySide2.QtWidgets  import QFrame, QVBoxLayout, QHBoxLayout, QMainWindow, QApplication, QSizePolicy, QSpacerItem
 from TopBar             import TopBar
 from FolderList         import FolderList
 from ImageList          import ImageList
 from ScrollBar          import ScrollBar
 from Canvas             import Canvas
 from BoxManager         import BoxManager
+from LabelConfigurator  import LabelConfigurator
 
 class Central(QFrame):
     '''Initializes, styles, and connects the various classes'''
@@ -32,6 +31,7 @@ class Central(QFrame):
         self.imageList      = ImageList()
         self.imageLayout    = QHBoxLayout(self.imageArea)
         self.imageBar       = ScrollBar(self.imageList)
+        self.labelConfig    = LabelConfigurator(self.boxManager)
 
         # Styling
         self.setStyleSheet('Central { '
@@ -67,8 +67,9 @@ class Central(QFrame):
         self.imageLayout.addWidget(self.imageBar)
         self.selectorLayout.addWidget(self.folderArea, 15)
         self.selectorLayout.addWidget(self.imageArea, 85)
-        self.contentLayout.addWidget(self.selectorArea, 30)
-        self.contentLayout.addWidget(self.canvas, 70)
+        self.contentLayout.addWidget(self.selectorArea, 25)
+        self.contentLayout.addWidget(self.canvas, 65)
+        self.contentLayout.addWidget(self.labelConfig, 10)
         self.overallLayout.addLayout(self.contentLayout)
         self.overallLayout.insertWidget(0, self.topBar)
 
@@ -90,7 +91,7 @@ class MainWindow(QMainWindow):
         self.central = Central()
         self.setCentralWidget(self.central)
         self.setWindowTitle('Label Maker')
-        self.setWindowIcon(QIcon(FileManager.iconPath))
+        self.setWindowIcon(QIcon(ThemeManager.ICON_PATH))
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
 

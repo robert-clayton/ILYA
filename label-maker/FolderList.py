@@ -1,9 +1,8 @@
 import os
-import FileManager, ThemeManager
-from PySide2            import *
+import ThemeManager
 from PySide2.QtCore     import Qt, Signal, QSize
-from PySide2.QtWidgets  import *#QListView, QStyledItemDelegate
-from PySide2.QtGui      import *
+from PySide2.QtWidgets  import QListView, QStyledItemDelegate, QFrame, QAbstractItemView, QStyle
+from PySide2.QtGui      import QStandardItemModel, QStandardItem, QFont, QColor, QBrush
 
 class FolderList(QListView):
     def __init__(self):
@@ -21,13 +20,13 @@ class FolderList(QListView):
         for idx, folder in enumerate(self.getImageFolders()):
             item = QStandardItem(folder)
             item.setData(folder.replace('imgur', '').replace('reddit_sub', '').replace('_', ''), role=Qt.DisplayRole)
-            item.setData(os.path.join(FileManager.imageFoldersPath, folder), role=Qt.UserRole)
+            item.setData(os.path.join(ThemeManager.IMAGE_FOLDERS_PATH, folder), role=Qt.UserRole)
 
             self.folderModel.appendRow(item)
 
     def getImageFolders(self):
-        contents = map(lambda f: f.name, os.scandir(FileManager.imageFoldersPath))
-        yield from filter(lambda f: os.path.isdir(os.path.join(FileManager.imageFoldersPath, f)), contents)
+        contents = map(lambda f: f.name, os.scandir(ThemeManager.IMAGE_FOLDERS_PATH))
+        yield from filter(lambda f: os.path.isdir(os.path.join(ThemeManager.IMAGE_FOLDERS_PATH, f)), contents)
 
     def resizeEvent(self, event):
         super().resizeEvent(event)

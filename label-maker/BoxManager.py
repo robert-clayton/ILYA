@@ -1,5 +1,5 @@
 import pandas as pd
-import FileManager
+import ThemeManager
 from PySide2.QtCore import Signal, QObject
 
 class BoxManager(QObject):
@@ -7,16 +7,16 @@ class BoxManager(QObject):
 
     def __init__(self):
         super().__init__()
-        self._dataFrame = pd.read_csv(FileManager.dataPath)
+        self._dataFrame = pd.read_csv(ThemeManager.DATA_PATH)
         self._labels = self.loadLabels()
 
         # new box variables
-        self._newBoxLabelName   = 'Default'
-        self._newBoxIsOccluded  = False #TODO: Give functionality to this
-        self._newBoxIsTruncated = False #TODO: Give functionality to this
-        self._newBoxIsGroupOf   = False #TODO: Give functionality to this
-        self._newBoxIsDepiction = False #TODO: Give functionality to this
-        self._newBoxIsInside    = False #TODO: Give functionality to this
+        self._newBoxLabelName   = 'Default' # Give Functionality to this
+        self._newBoxIsOccluded  = False
+        self._newBoxIsTruncated = False
+        self._newBoxIsGroupOf   = False
+        self._newBoxIsDepiction = False
+        self._newBoxIsInside    = False
     
     def setNewBoxLabelName(self, param):
         self._newBoxLabelName = param
@@ -30,6 +30,10 @@ class BoxManager(QObject):
         self._newBoxIsTruncated = param
         self.newBoxIsTruncatedChanged.emit(param)
     
+    def setNewBoxIsGroupOf(self, param):
+        self._newBoxIsGroupOf = param
+        self.newBoxIsGroupOfChanged.emit(param)
+
     def setNewBoxIsDepiction(self, param):
         self._newBoxIsDepiction = param
         self.newBoxIsDepictionChanged.emit(param)
@@ -57,10 +61,10 @@ class BoxManager(QObject):
         return Box(*box)
 
     def saveDataFrame(self):
-        self._dataFrame.to_csv(FileManager.dataPath, index=False)
+        self._dataFrame.to_csv(ThemeManager.DATA_PATH, index=False)
 
     def loadLabels(self):
-        with open(FileManager.labelsPath, 'r') as labels:
+        with open(ThemeManager.LABELS_PATH, 'r') as labels:
             return [label.rstrip('\n') for label in labels]
 
     newBoxLabelNameChanged    = Signal(object)

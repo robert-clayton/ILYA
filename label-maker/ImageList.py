@@ -1,5 +1,5 @@
 import os, copy
-import FileManager
+import ThemeManager
 from PIL                import Image
 from PySide2.QtWidgets  import *
 from PySide2.QtCore     import *
@@ -88,7 +88,7 @@ class Populate(QThread):
 
     def getImageFolderContents(self, folder):
         validExts = ('.jpg', '.jpeg', '.png')
-        path = os.path.join(FileManager.imageFoldersPath, folder)
+        path = os.path.join(ThemeManager.IMAGE_FOLDERS_PATH, folder)
         contents = map(lambda f: f.name, os.scandir(path))
         yield from filter(lambda f: any(f.endswith(ext) for ext in validExts), contents)
 
@@ -96,7 +96,7 @@ class Populate(QThread):
         model = QStandardItemModel()
 
         for image in self.getImageFolderContents(self.folder.data(role=Qt.UserRole)):
-            url = os.path.join(FileManager.imageFoldersPath, self.folder.data(role=Qt.UserRole), image)
+            url = os.path.join(ThemeManager.IMAGE_FOLDERS_PATH, self.folder.data(role=Qt.UserRole), image)
             item = QStandardItem(image)
             item.setData(url, role=Qt.UserRole)
             model.appendRow(item)

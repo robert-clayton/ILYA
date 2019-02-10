@@ -1,5 +1,5 @@
 import os
-import FileManager, ThemeManager
+import ThemeManager
 from PySide2            import *
 from PySide2.QtCore     import *
 from PySide2.QtGui      import *
@@ -37,7 +37,7 @@ class TopBar(QFrame):
                             'border-style: solid; }')
         self.setMinimumHeight(50)
         self.iconReader.setScaledSize(QSize(20,20))
-        self.iconReader.setFileName(FileManager.iconPath)
+        self.iconReader.setFileName(ThemeManager.ICON_PATH)
         self.icon.setPixmap(QPixmap.fromImage(self.iconReader.read()))
         self.dropShadow.setOffset(QPointF(0,5))
         self.dropShadow.setColor(QColor(30,30,30,100))
