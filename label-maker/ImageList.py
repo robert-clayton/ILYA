@@ -68,7 +68,7 @@ class Thumbnail(QStyledItemDelegate):
         painter.setRenderHint(QPainter.HighQualityAntialiasing, True)
 
         if option.state & (QStyle.State_Selected | QStyle.State_MouseOver):
-            painter.setOpacity(1)
+            paTWOinter.setOpacity(1)
         else:
             painter.setOpacity(0.90)
 
