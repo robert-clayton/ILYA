@@ -9,7 +9,7 @@ with open('README.md') as f:
     readme = f.read()
 
 with open('VERSION') as f:
-    version = f.read()
+    version = str(f.read())
 
 setup(
     name='label-maker',
