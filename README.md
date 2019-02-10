@@ -33,6 +33,7 @@ Taking a cue from Google's Open Images Dataset V4, boxes are saved in CSV format
 - Confidence: Float - Dummy value, always 1.0
 - XMin, XMax, YMin, YMax: Float - Box coordinates, normalized to the image as [0.0 ... 1.0]
 - IsOccluded: Bool - Whether the object is occluding by another object
+- IsTruncated: Bool - Whether the object is a part of the LabelName object
 - IsGroupOf: Bool - Whether the object is a group of the LabelName object
 - IsDepiction: Bool - Whether the object is a depiction of the LabelName object
 - IsInside: Bool - Whether the object is the inside of the LabelName object
