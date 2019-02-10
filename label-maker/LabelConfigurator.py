@@ -45,10 +45,16 @@ class Check(QFrame):
 
         # Objects
         self.image = QImageReader()
+        self.imageSize = QSize(20,20)
 
         # Styling
-        self.setFixedSize(100, 30)
-        self.image.setScaledSize(QSize(20,20))
+        self.font = QFont('Arial', 8)
+        self.font.setWeight(QFont.Bold)
+        self.nameHeight = QFontMetrics(self.font).height()
+        self.nameWidth = QFontMetrics(self.font).width(self.name)
+        
+        self.image.setScaledSize(self.imageSize)
+        self.setFixedSize(self.imageSize.width() + self.padding + self.nameWidth, self.imageSize.height())
     
     def setPadding(self, param):
         self.padding = param
@@ -64,7 +70,7 @@ class Check(QFrame):
         self.hovered = False
         self.update()
     
-    def mousePressEvent(self, event):
+    def mouseReleaseEvent(self, event):
         super().mousePressEvent(event)
         if event.button() == Qt.LeftButton:
             self.enabled = not self.enabled
@@ -82,13 +88,10 @@ class Check(QFrame):
         painter.drawPixmap(0, (self.height() - pixmap.height()) / 2, pixmap)
 
         # Style font and draw text at correct location
-        font = QFont('Arial', 8)
-        font.setWeight(QFont.Bold)
-        nameHeight = QFontMetrics(font).height()
-        painter.setFont(font)
+        painter.setFont(self.font)
         pen = QPen()
         pen.setColor(ThemeManager.LABEL_QC if any([self.hovered, self.enabled]) else ThemeManager.LABEL_LOW_OPACITY_QC)
         painter.setPen(pen)
-        painter.drawText(pixmap.width() + self.padding, self.height() / 2 + nameHeight / 4, self.name)
+        painter.drawText(pixmap.width() + self.padding, self.height() / 2 + self.nameHeight / 4, self.name)
     
     stateChanged = Signal(object)

@@ -35,7 +35,7 @@ class TopBar(QFrame):
                             'border-top-right-radius:    15px;'
                             'border-width: 0px;'
                             'border-style: solid; }')
-        self.setMinimumHeight(50)
+        self.setMinimumHeight(35)
         self.iconReader.setScaledSize(QSize(20,20))
         self.iconReader.setFileName(ThemeManager.ICON_PATH)
         self.icon.setPixmap(QPixmap.fromImage(self.iconReader.read()))

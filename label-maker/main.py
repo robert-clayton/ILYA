@@ -1,7 +1,7 @@
 import ThemeManager
-from PySide2.QtCore     import Signal, Qt
-from PySide2.QtGui      import QIcon
-from PySide2.QtWidgets  import QFrame, QVBoxLayout, QHBoxLayout, QMainWindow, QApplication, QSizePolicy, QSpacerItem
+from PySide2.QtCore     import Signal, Qt, QPointF
+from PySide2.QtGui      import QIcon, QColor
+from PySide2.QtWidgets  import QFrame, QVBoxLayout, QHBoxLayout, QMainWindow, QApplication, QSizePolicy, QSpacerItem, QGraphicsDropShadowEffect, QWidget
 from TopBar             import TopBar
 from FolderList         import FolderList
 from ImageList          import ImageList
@@ -90,18 +90,37 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.central = Central()
         self.setCentralWidget(self.central)
-        self.setWindowTitle('Label Maker')
-        self.setWindowIcon(QIcon(ThemeManager.ICON_PATH))
-        self.setWindowFlags(Qt.FramelessWindowHint)
-        self.setAttribute(Qt.WA_TranslucentBackground)
 
     def closeEvent(self, event):
         self.central.boxManager.saveDataFrame()
         super().closeEvent(event)
 
+class MainWindowWrapper(QWidget):
+    def __init__(self):
+        super().__init__()
+        # Objects
+        self.layout = QHBoxLayout(self)
+        self.window = MainWindow()
+        self.dropShadow = QGraphicsDropShadowEffect(self)
+
+        # Layout
+        self.layout.addWidget(self.window)
+
+        # Styling
+        self.layout.setMargin(20)
+        self.dropShadow.setOffset(QPointF(0,4))
+        self.dropShadow.setColor(QColor(0,0,0,100))
+        self.dropShadow.setBlurRadius(10)
+        self.setGraphicsEffect(self.dropShadow)
+        self.setWindowTitle('Label Maker')
+        self.setWindowIcon(QIcon(ThemeManager.ICON_PATH))
+        self.setWindowFlags(Qt.FramelessWindowHint)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+        
+
 def main():
     app = QApplication()
-    main = MainWindow()
+    main = MainWindowWrapper()
     main.show()
     app.exec_()
 
