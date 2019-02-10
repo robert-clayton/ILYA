@@ -1,7 +1,7 @@
 import os
 import FileManager, ThemeManager
 from PySide2            import *
-from PySide2.QtCore     import *
+from PySide2.QtCore     import Qt, Signal, QSize
 from PySide2.QtWidgets  import *#QListView, QStyledItemDelegate
 from PySide2.QtGui      import *
 
@@ -21,13 +21,13 @@ class FolderList(QListView):
         for idx, folder in enumerate(self.getImageFolders()):
             item = QStandardItem(folder)
             item.setData(folder.replace('imgur', '').replace('reddit_sub', '').replace('_', ''), role=Qt.DisplayRole)
-            item.setData(os.path.join(FileManager.imagesFolder, folder), role=Qt.UserRole)
+            item.setData(os.path.join(FileManager.imageFoldersPath, folder), role=Qt.UserRole)
 
             self.folderModel.appendRow(item)
 
     def getImageFolders(self):
-        contents = map(lambda f: f.name, os.scandir(FileManager.imagesFolder))
-        yield from filter(lambda f: os.path.isdir(os.path.join(FileManager.imagesFolder, f)), contents)
+        contents = map(lambda f: f.name, os.scandir(FileManager.imageFoldersPath))
+        yield from filter(lambda f: os.path.isdir(os.path.join(FileManager.imageFoldersPath, f)), contents)
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
@@ -61,8 +61,6 @@ class Folder(QStyledItemDelegate):
             pen.setColor(QColor(0,0,0,255))
             painter.setPen(pen)
             painter.setBrush(QBrush(ThemeManager.ACCENT_QC))
-            
-            
             painter.drawRect(option.rect.x(), option.rect.y(), option.rect.width() - 1, option.rect.height() - 1)
         
         painter.translate(option.rect.x(), option.rect.y())

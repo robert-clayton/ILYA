@@ -9,6 +9,7 @@ from FolderList         import FolderList
 from ImageList          import ImageList
 from ScrollBar          import ScrollBar
 from Canvas             import Canvas
+from BoxManager         import BoxManager
 
 class Central(QFrame):
     '''Initializes, styles, and connects the various classes'''
@@ -16,6 +17,7 @@ class Central(QFrame):
     def __init__(self):
         super().__init__()
         # Initiate objects
+        self.boxManager     = BoxManager()
         self.overallLayout  = QVBoxLayout(self)
         self.topBar         = TopBar()
         self.contentLayout  = QHBoxLayout()
@@ -25,7 +27,7 @@ class Central(QFrame):
         self.folderLayout   = QHBoxLayout(self.folderArea)
         self.folderList     = FolderList()
         self.folderBar      = ScrollBar(self.folderList)
-        self.canvas         = Canvas()
+        self.canvas         = Canvas(self.boxManager)
         self.imageArea      = QFrame()
         self.imageList      = ImageList()
         self.imageLayout    = QHBoxLayout(self.imageArea)
@@ -85,12 +87,16 @@ class Central(QFrame):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        central = Central()
-        self.setCentralWidget(central)
+        self.central = Central()
+        self.setCentralWidget(self.central)
         self.setWindowTitle('Label Maker')
         self.setWindowIcon(QIcon(FileManager.iconPath))
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
+
+    def closeEvent(self, event):
+        self.central.boxManager.saveDataFrame()
+        super().closeEvent(event)
 
 def main():
     app = QApplication()

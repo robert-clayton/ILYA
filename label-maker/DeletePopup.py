@@ -20,7 +20,7 @@ class ConfirmDelete(QDialog):
         self.layout.addLayout(self.buttonLayout)
 
         # Styling
-        self.setWindowFlags(Qt.Popup | Qt.FramelessWindowHint)
+        self.setWindowFlags(Qt.Popup | Qt.FramelessWindowHint | Qt.WA_DeleteOnClose)
         self.layout.setSpacing(30)
         self.setStyleSheet('ConfirmDelete {'
             'background-color: ' + ThemeManager.BG + ';'
@@ -42,13 +42,12 @@ class ConfirmDelete(QDialog):
             '}')
 
         # Connections
-        self.cancelButton.clicked.connect(self.hide)
-        self.confirmButton.clicked.connect(self.confirmed)
+        self.cancelButton.clicked.connect(self.close)
+        self.confirmButton.clicked.connect(self.accepted)
+        self.confirmButton.clicked.connect(self.close)
 
     def showEvent(self, event):
         super().showEvent(event)
         self.move(self.pos() +
                 QPoint(self.width() / 2, self.height() / 2)
             )
-
-    confirmed = Signal()
