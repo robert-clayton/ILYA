@@ -1,9 +1,9 @@
 import os, copy
 import ThemeManager
 from PIL                import Image
-from PySide2.QtWidgets  import *
-from PySide2.QtCore     import *
-from PySide2.QtGui      import *
+from PySide2.QtWidgets  import QListView, QStyledItemDelegate, QStyle, QFrame, QAbstractItemView
+from PySide2.QtCore     import QSize, Signal, QThread, Qt
+from PySide2.QtGui      import QImageReader, QStandardItemModel, QStandardItem, QPainter, QPixmap
 
 class ImageList(QListView):
     def __init__(self, model = None):
@@ -62,12 +62,8 @@ class Thumbnail(QStyledItemDelegate):
         painter.save()
         item = index.model().data(index, role=Qt.UserRole)
 
-        # Suppress some of the libpng profile warnings
-        try:
-            self.reader.setFileName(item)
-            image = QPixmap.fromImageReader(self.reader)
-        except:
-            pass
+        self.reader.setFileName(item)
+        image = QPixmap.fromImageReader(self.reader)
         painter.translate(option.rect.x(), option.rect.y())
         painter.setRenderHint(QPainter.HighQualityAntialiasing, True)
 
