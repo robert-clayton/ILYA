@@ -116,7 +116,9 @@ class MainWindowWrapper(QWidget):
         self.setWindowIcon(QIcon(ThemeManager.ICON_PATH))
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
-        
+
+    def closeEvent(self, event):
+        self.window.closeEvent(event)
 
 def main():
     app = QApplication()
