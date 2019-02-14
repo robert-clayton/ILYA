@@ -12,12 +12,12 @@ with open('VERSION') as f:
     version = str(f.read())
 
 setup(
-    name='label-maker',
+    name='ILYA',
     author='Robert Clayton',
     author_email='rclayton@theia.io',
     version=version,
-    description='Data preparation bounding box-based machine learning',
-    url='https://github.com/robert-clayton/label-maker/',
+    description='Data preparation for bounding box based machine learning',
+    url='https://github.com/robert-clayton/ILYA/tree/master',
     license='GPLv3',
     classifiers=[
         'Development Status :: 3 - Alpha',
