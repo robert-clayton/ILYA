@@ -9,24 +9,29 @@ class TopBar(QFrame):
     '''Interactable bar at the top of the application'''
     def __init__(self):
         super().__init__()
-        # Movement logic vars
-        self.mouseMovePos     = self.window().pos()
-        self.mousePressPos    = self.window().pos()
-        self.draggingThreshold= 5
+        # Variables
+        self.mouseMovePos       = self.window().pos()
+        self.mousePressPos      = self.window().pos()
+        self.draggingThreshold  = 5
+        self.selectedFolder     = ''
+        self.selectedImage      = ''
         
         # Objects
         self.dropShadow     = QGraphicsDropShadowEffect(self)
         self.icon           = QLabel()
         self.iconReader     = QImageReader()
+        self.title          = QLabel()
         self.minimize       = Button('Minimize')
         self.close          = Button('Close')
         self.layout         = QHBoxLayout(self)
 
         # Layout
-        self.layout.addWidget(self.icon)
+        self.layout.addWidget(self.icon, alignment=Qt.AlignLeft)
         self.layout.addStretch(1)
-        self.layout.addWidget(self.minimize)
-        self.layout.addWidget(self.close)
+        self.layout.addWidget(self.title, alignment=Qt.AlignCenter)
+        self.layout.addStretch(1)
+        self.layout.addWidget(self.minimize, alignment=Qt.AlignRight)
+        self.layout.addWidget(self.close, alignment=Qt.AlignRight)
 
         # Styling
         self.setStyleSheet('TopBar { '
@@ -39,6 +44,7 @@ class TopBar(QFrame):
         self.iconReader.setScaledSize(QSize(20,20))
         self.iconReader.setFileName(ThemeManager.ICON_PATH)
         self.icon.setPixmap(QPixmap.fromImage(self.iconReader.read()))
+        self.title.setStyleSheet('color: ' + ThemeManager.ACCENT + ';')
         self.dropShadow.setOffset(QPointF(0,5))
         self.dropShadow.setColor(QColor(30,30,30,100))
         self.dropShadow.setBlurRadius(10)
@@ -46,6 +52,18 @@ class TopBar(QFrame):
         self.layout.setContentsMargins(20,0,20,0)
         self.layout.setSpacing(10)
         self.layout.setAlignment(Qt.AlignVCenter)
+    
+    def setSelectedFolder(self, param):
+        self.selectedFolder = str(param)
+        self.updateTitle()
+    
+    def setSelectedImage(self, param):
+        self.selectedImage = str(param)
+        self.updateTitle()
+    
+    def updateTitle(self):
+        if self.selectedFolder:
+            self.title.setText('./' + self.selectedFolder + '/' + self.selectedImage)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:

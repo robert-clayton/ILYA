@@ -23,13 +23,12 @@ class Canvas(QFrame):
         # Objects
         self.image              = None
         self.messageResetTimer  = QTimer()
+        self.brush              = QBrush()
+        self.pen                = QPen()
         self.boxManager         = boxManager
 
         # Styling
         self.setMinimumSize(QSize(850, 725))
-        self.setStyleSheet('Canvas { '
-            'background-color: rgba(50,50,50,255);'
-            '}')
         self.messageResetTimer.setInterval(3000)
         self.messageResetTimer.setSingleShot(True)
         
@@ -47,11 +46,17 @@ class Canvas(QFrame):
 
     def changeImage(self, newImageIndex):
         # Set new image index
-        self.imageData = QPersistentModelIndex(newImageIndex)
-        self.image = QPixmap(newImageIndex.data(role=Qt.UserRole))
+        if newImageIndex:
+            self.imageData = QPersistentModelIndex(newImageIndex)
+            image = QPixmap(newImageIndex.data(role=Qt.UserRole))
+            self.scaledImage = image.scaled(self.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
-        # Get matching boxes already in data frame
-        self.boxes = self.boxManager.getBoxesForImage(newImageIndex.data(role=Qt.DisplayRole))
+            # Get matching boxes already in data frame
+            self.boxes = self.boxManager.getBoxesForImage(newImageIndex.data(role=Qt.DisplayRole))
+        else:
+            self.imageData = None
+            self.scaledImage = None
+            self.boxes = []
 
         # Update to redraw
         self.update()
@@ -59,12 +64,18 @@ class Canvas(QFrame):
     def paintEvent(self, event):
         painter = QPainter(self)
 
+        # Draw background
+        painter.save()
+        self.brush.setColor(ThemeManager.BG_L2_QC)
+        self.brush.setStyle(Qt.SolidPattern)
+        painter.setBrush(self.brush)
+        painter.setPen(Qt.NoPen)
+        painter.drawRect(0, 0, self.size().width()-1, self.size().height()-1)
+        painter.restore()
+
         # If image is set
         if self.imageData:
             if self.imageData.isValid():
-                # Scale image down
-                self.scaledImage = self.image.scaled(self.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-                
                 # Find xy offsets
                 self.dx = self.size().width()  - self.scaledImage.size().width()  if self.size().width()  - self.scaledImage.size().width()  else self.scaledImage.size().width()  - self.size().width()
                 self.dy = self.size().height() - self.scaledImage.size().height() if self.size().height() - self.scaledImage.size().height() else self.scaledImage.size().height() - self.size().height()
@@ -75,6 +86,7 @@ class Canvas(QFrame):
 
                 # Paint in-progress box
                 if self.drawingRect:
+                    painter.save()
                     x, x2, y, y2 = self.drawingRect
                     # Convert % to xy coords, account for off by one error
                     x  = (x * self.scaledImage.size().width() + self.dx / 2) - 1
@@ -83,11 +95,17 @@ class Canvas(QFrame):
                     y2 = (y2 * self.scaledImage.size().height() + self.dy / 2) - 2
 
                     # Setup painter's brush and pen colors
-                    
+                    self.brush.setColor(ThemeManager.ACCENT_VLOW_OPACITY_QC)
+                    self.brush.setStyle(Qt.SolidPattern)
+                    self.pen.setColor(ThemeManager.ACCENT_QC)
+                    painter.setBrush(self.brush)
+                    painter.setPen(self.pen)
                     painter.drawRect(QRect(QPoint(x, y), QPoint(x2, y2)))
+                    painter.restore()
 
                 # Paint existing boxes
                 for box in self.boxes:
+                    painter.save()
                     x, x2, y, y2 = box.getRect()
                     # Convert % to xy coords, account for off by one error, and draw box's rect
                     x  = (x * self.scaledImage.size().width() + self.dx / 2) - 1
@@ -96,26 +114,37 @@ class Canvas(QFrame):
                     y2 = (y2 * self.scaledImage.size().height() + self.dy / 2) - 2
                     painter.drawRect(QRect(QPoint(x, y), QPoint(x2, y2)))
 
+                    # Setup painter's brush and pen colors
+                    self.brush.setColor(ThemeManager.ACCENT_LOW_OPACITY_QC)
+                    self.brush.setStyle(Qt.SolidPattern)
+                    self.pen.setColor(ThemeManager.ACCENT_QC)
+                    painter.setBrush(self.brush)
+                    painter.setPen(self.pen)
+                    painter.drawRect(QRect(QPoint(x, y), QPoint(x2, y2)))
+
                     # Draw box's label
                     pen = QPen()
                     font = QFont('Arial', 8)
-                    pen.setColor(QColor(10,10,10))
+                    pen.setColor(ThemeManager.LABEL_QC)
                     painter.setPen(pen)
                     painter.drawText(x + 2, y + 11, box.getLabel())
+                    painter.restore()
 
+            # TODO: Move this logic out of Paint Event
             # Image this index was referencing was deleted
             else: 
                 self.boxes = []
                 self.imageData = None
 
         if self.message:
-            pen = QPen()
+            painter.save()
             font = QFont('Arial', 20)
             messageWidth = QFontMetrics(font).width(self.message)
             painter.setFont(font)
-            pen.setColor(ThemeManager.ACCENT_QC)
-            painter.setPen(pen)
+            self.pen.setColor(ThemeManager.ACCENT_QC)
+            painter.setPen(self.pen)
             painter.drawText((self.width() - messageWidth) / 2, self.height() * .9, self.message)
+            painter.restore()
 
         painter.end()
 

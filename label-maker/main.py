@@ -74,16 +74,20 @@ class Central(QFrame):
         self.overallLayout.insertWidget(0, self.topBar)
 
         # Connections
-        self.folderList.selectedFolderChanged.connect(self.populateImageList)
-        self.imageList.selectedImageChanged.connect(self.changeCanvasImage)
+        self.folderList.selectedFolderChanged.connect(self.handleSelectedFolderChanged)
+        self.imageList.selectedImageChanged.connect(self.handleSelectedImageChanged)
 
-    def populateImageList(self, folder):
+    def handleSelectedFolderChanged(self, folder):
         self.imageList.populate(folder)
+        self.canvas.changeImage(None)
         self.canvas.setMessage('Switching Folders - {}'.format(folder.data(role=Qt.DisplayRole)))
+        self.topBar.setSelectedFolder(str(folder.data(role=Qt.UserRole+1)))
+        self.topBar.setSelectedImage('')
 
-    def changeCanvasImage(self, image):
+    def handleSelectedImageChanged(self, image):
         self.canvas.changeImage(image)
         self.canvas.setMessage('Switching Images - {}'.format(image.data(role=Qt.DisplayRole)))
+        self.topBar.setSelectedImage(str(image.data(role=Qt.DisplayRole)))
 
 class MainWindow(QMainWindow):
     def __init__(self):

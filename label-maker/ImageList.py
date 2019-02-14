@@ -32,6 +32,7 @@ class ImageList(QListView):
     
     selectedImageChanged = Signal(object)
 
+# TODO: Do not draw bottom-left corner to keep with the window's style
 class Thumbnail(QStyledItemDelegate):
     '''Styled Item Delegate paints images directly to the List View at the desired resolution'''
     def __init__(self):

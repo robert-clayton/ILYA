@@ -22,6 +22,7 @@ class FolderList(QListView):
             item = QStandardItem(folder)
             item.setData(folder.replace('imgur', '').replace('reddit_sub', '').replace('_', ''), role=Qt.DisplayRole)
             item.setData(os.path.join(ThemeManager.IMAGE_FOLDERS_PATH, folder), role=Qt.UserRole)
+            item.setData(folder, role=Qt.UserRole+1)
 
             self.folderModel.appendRow(item)
 
