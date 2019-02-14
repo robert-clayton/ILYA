@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import ThemeManager
 from PySide2.QtCore     import Signal, Qt, QPointF
 from PySide2.QtGui      import QIcon, QColor
