@@ -1,4 +1,4 @@
-# Label Maker
+# Image Labels You Affix - ILYA
 
 A tool for labeling bounding boxes on images to be used for ML training.
 
