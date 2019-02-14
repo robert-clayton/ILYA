@@ -1,1 +1,5 @@
 ImageID,Source,LabelName,Confidence,XMin,XMax,YMin,YMax,IsOccluded,IsTruncated,IsGroupOf,IsDepiction,IsInside
+89lwih-Rubber_dolls_in_love-ipaEeGe.png,label-maker,Default,1.0,0.0,0.2564870259481038,0.19034482758620688,0.3103448275862069,False,False,False,False,False
+89lwih-Rubber_dolls_in_love-ipaEeGe.png,label-maker,Default,1.0,0.31037924151696605,0.3562874251497006,0.1503448275862069,0.35724137931034483,False,False,False,False,False
+89lwih-Rubber_dolls_in_love-ipaEeGe.png,label-maker,Default,1.0,0.5219560878243513,0.7095808383233533,0.04275862068965517,0.13241379310344828,False,False,False,False,False
+89lwih-Rubber_dolls_in_love-ipaEeGe.png,label-maker,Default,1.0,0.18463073852295409,0.7255489021956087,0.17517241379310344,0.5227586206896552,False,False,False,False,False

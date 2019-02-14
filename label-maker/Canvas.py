@@ -1,9 +1,10 @@
 import os
 from PySide2.QtCore     import QTimer, Signal, QSize, QRect, QPoint, Qt, QPersistentModelIndex
-from PySide2.QtGui      import QPainter, QPen, QFont, QFontMetrics, QPixmap, QColor
+from PySide2.QtGui      import QPainter, QPen, QFont, QFontMetrics, QPixmap, QColor, QBrush
 from PySide2.QtWidgets  import QFrame
 from BoxManager         import BoxManager
 from DeletePopup        import ConfirmDelete
+from LabelConfigurator  import LabelConfigurator
 import ThemeManager
 
 class Canvas(QFrame):
@@ -13,16 +14,16 @@ class Canvas(QFrame):
     def __init__(self, boxManager):
         super().__init__()
         # Variables
-        self.message = ''
-        self.messageResetTimer = QTimer()
-        self.imageData = None
-        self.boxes  = []
+        self.message     = ''
+        self.imageData   = None
+        self.boxes       = []
         self.drawingRect = None
-        self.drawing = False
+        self.drawing     = False
 
         # Objects
-        self.image = None
-        self.boxManager = boxManager
+        self.image              = None
+        self.messageResetTimer  = QTimer()
+        self.boxManager         = boxManager
 
         # Styling
         self.setMinimumSize(QSize(850, 725))
@@ -80,6 +81,9 @@ class Canvas(QFrame):
                     y  = (y * self.scaledImage.size().height() + self.dy / 2) - 1
                     x2 = (x2 * self.scaledImage.size().width() + self.dx / 2) - 2
                     y2 = (y2 * self.scaledImage.size().height() + self.dy / 2) - 2
+
+                    # Setup painter's brush and pen colors
+                    
                     painter.drawRect(QRect(QPoint(x, y), QPoint(x2, y2)))
 
                 # Paint existing boxes
@@ -153,12 +157,8 @@ class Canvas(QFrame):
 
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
-        if event.button() is Qt.LeftButton:
+        if event.button() == Qt.LeftButton:
             self.handleDrawnBox()
-        elif event.button() is Qt.RightButton and self.image:
-            confirmDelete = ConfirmDelete(self)
-            confirmDelete.accepted.connect(self.deleteImage)
-            confirmDelete.exec_()
 
     def handleDrawnBox(self):
         '''Called by mouse release event. Lets the Box Manager know to add box to data frame.'''
@@ -169,10 +169,3 @@ class Canvas(QFrame):
         self.drawingRect = None
         self.update()
         self.drawing = False
-
-    #FIXME: PermissionError: [WinError 32] The process cannot access the file because it is being used by another process
-    def deleteImage(self):
-        path = self.imageData.data(role=Qt.UserRole)
-        self.imageData.model().removeRow(self.imageData.row())
-        self.update()
-        os.remove(path)

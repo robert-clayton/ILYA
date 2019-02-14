@@ -13,6 +13,7 @@ class FolderList(QListView):
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setItemDelegate(Folder())
 
         self.setStyleSheet('FolderList { background-color: Transparent; color: rgb(190,190,190); }')
         self.setAttribute(Qt.WA_TranslucentBackground)
@@ -28,11 +29,6 @@ class FolderList(QListView):
         contents = map(lambda f: f.name, os.scandir(ThemeManager.IMAGE_FOLDERS_PATH))
         yield from filter(lambda f: os.path.isdir(os.path.join(ThemeManager.IMAGE_FOLDERS_PATH, f)), contents)
 
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        if event.oldSize().width() != event.size().width():
-            self.setItemDelegate(Folder(self))
-
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.LeftButton:
             index = self.indexAt(event.pos())
@@ -41,13 +37,12 @@ class FolderList(QListView):
     selectedFolderChanged = Signal(object)
 
 class Folder(QStyledItemDelegate):
-    def __init__(self, view, height=20):
+    def __init__(self, height=20):
         super().__init__()
         self.height = height
-        self.view = view
 
     def sizeHint(self, option, index):
-        return QSize(self.view.width(), self.height)
+        return QSize(option.rect.width(), self.height)
     
     def paint(self, painter, option, index):
         painter.save()
@@ -55,7 +50,6 @@ class Folder(QStyledItemDelegate):
         font = QFont('Arial', 10)
 
         if option.state & QStyle.State_Selected:
-            # font.setBold(True)
             pen = painter.pen()
             pen.setColor(QColor(0,0,0,255))
             painter.setPen(pen)

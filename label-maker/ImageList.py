@@ -1,9 +1,9 @@
-import os, copy
+import os
 import ThemeManager
 from PIL                import Image
 from PySide2.QtWidgets  import QListView, QStyledItemDelegate, QStyle, QFrame, QAbstractItemView
 from PySide2.QtCore     import QSize, Signal, QThread, Qt
-from PySide2.QtGui      import QImageReader, QStandardItemModel, QStandardItem, QPainter, QPixmap
+from PySide2.QtGui      import QImageReader, QStandardItemModel, QStandardItem, QPixmap
 
 class ImageList(QListView):
     def __init__(self, model = None):
@@ -16,13 +16,9 @@ class ImageList(QListView):
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setItemDelegate(Thumbnail())
         self.setLayoutMode(QListView.Batched)
         self.setBatchSize(10)
-
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        if event.oldSize().width() != event.size().width():
-            self.setItemDelegate(Thumbnail(self.width()))
     
     def populate(self, folder):
         self.populateThread = Populate(folder)
@@ -38,23 +34,17 @@ class ImageList(QListView):
 
 class Thumbnail(QStyledItemDelegate):
     '''Styled Item Delegate paints images directly to the List View at the desired resolution'''
-
-    def __init__(self, width):
+    def __init__(self):
         super().__init__()
-        self.thumbnailWidth = width
-        self.height = None
         self.reader = QImageReader()
-    
-    def setThumbnailWidth(self, param):
-        self.thumbnailWidth = param
 
     def sizeHint(self, option, index):
         item = index.model().data(index, role=Qt.UserRole)
         with Image.open(item) as img:
             width, height = img.size
-        dx = self.thumbnailWidth / width
-        self.height = height * dx
-        size = QSize(self.thumbnailWidth, self.height)
+        dx = option.rect.width() / width
+        height *= dx
+        size = QSize(option.rect.width(), height)
         self.reader.setScaledSize(size)
         return size
 
@@ -65,10 +55,9 @@ class Thumbnail(QStyledItemDelegate):
         self.reader.setFileName(item)
         image = QPixmap.fromImageReader(self.reader)
         painter.translate(option.rect.x(), option.rect.y())
-        painter.setRenderHint(QPainter.HighQualityAntialiasing, True)
 
         if option.state & (QStyle.State_Selected | QStyle.State_MouseOver):
-            paTWOinter.setOpacity(1)
+            painter.setOpacity(1)
         else:
             painter.setOpacity(0.90)
 

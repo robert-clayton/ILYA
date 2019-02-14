@@ -1,7 +1,7 @@
 import ThemeManager
-from PySide2.QtWidgets import *
-from PySide2.QtCore import *
-from PySide2.QtGui import *
+from PySide2.QtWidgets import QFrame, QVBoxLayout
+from PySide2.QtCore import Signal, QSize, Qt
+from PySide2.QtGui import QImageReader, QPainter, QPen, QFont, QPixmap, QFontMetrics
 
 class LabelConfigurator(QFrame):
     def __init__(self, boxManager):
