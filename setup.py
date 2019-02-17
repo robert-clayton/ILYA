@@ -8,7 +8,7 @@ with open(op.join(op.abspath(op.dirname(__file__)), 'requirements.txt'), encodin
 with open('README.md') as f:
     readme = f.read()
 
-with open('VERSION') as f:
+with open('VERSION.txt') as f:
     version = str(f.read())
 
 setup(
