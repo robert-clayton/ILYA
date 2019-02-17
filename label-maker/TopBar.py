@@ -36,8 +36,8 @@ class TopBar(QFrame):
         # Styling
         self.setStyleSheet('TopBar { '
                             'background: ' + ThemeManager.TOP_BAR + ';'
-                            'border-top-left-radius:     15px;'
-                            'border-top-right-radius:    15px;'
+                            'border-top-left-radius:     ' + str(ThemeManager.CURVE) + 'px;'
+                            'border-top-right-radius:    ' + str(ThemeManager.CURVE) + 'px;'
                             'border-width: 0px;'
                             'border-style: solid; }')
         self.setMinimumHeight(35)

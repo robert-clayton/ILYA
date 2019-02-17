@@ -1,6 +1,6 @@
 import os
 from PySide2.QtCore     import QTimer, Signal, QSize, QRect, QPoint, Qt, QPersistentModelIndex
-from PySide2.QtGui      import QPainter, QPen, QFont, QFontMetrics, QPixmap, QColor, QBrush
+from PySide2.QtGui      import QPainter, QPen, QFont, QFontMetrics, QPixmap, QColor, QBrush, QPainterPath
 from PySide2.QtWidgets  import QFrame
 from BoxManager         import BoxManager
 from DeletePopup        import ConfirmDelete
@@ -63,14 +63,19 @@ class Canvas(QFrame):
 
     def paintEvent(self, event):
         painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
 
+        # TODO: Use QPainterPath's arcTo function to do this in a single draw
         # Draw background
         painter.save()
         self.brush.setColor(ThemeManager.BG_L2_QC)
         self.brush.setStyle(Qt.SolidPattern)
         painter.setBrush(self.brush)
         painter.setPen(Qt.NoPen)
-        painter.drawRect(0, 0, self.size().width()-1, self.size().height()-1)
+        painter.drawRect(0, 0, self.size().width() / 2, self.size().height()) # Left Side
+        painter.drawRect(0, 0, self.size().width(), self.size().height() / 2) # Top Side
+        painter.drawRoundedRect(self.rect(), ThemeManager.CURVE, ThemeManager.CURVE)
+
         painter.restore()
 
         # If image is set
@@ -187,14 +192,24 @@ class Canvas(QFrame):
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
         if event.button() == Qt.LeftButton:
-            self.handleDrawnBox()
+            self.handleDrawnBox(event.globalPos())
 
-    def handleDrawnBox(self):
+    def handleDrawnBox(self, spawnPos):
         '''Called by mouse release event. Lets the Box Manager know to add box to data frame.'''
         if self.drawing and self.checkBoxValid(self.drawingRect):
-            x, x2, y, y2 = self.drawingRect
-            newBox = self.boxManager.addBoxToDataFrame(self.imageData.data(role=Qt.DisplayRole), min([x, x2]), max([x, x2]), min([y, y2]), max([y, y2]))
-            self.boxes.append(newBox)
+            newConfig = LabelConfigurator(self.boxManager, spawnPos)
+            newConfig.labelAccepted.connect(self.addNewBox)
+            newConfig.exec_()
         self.drawingRect = None
         self.update()
         self.drawing = False
+
+    def addNewBox(self, labelConfig):
+        x, x2, y, y2 = self.drawingRect
+        labelName, isOccluded, isTruncated, isGroupOf, isDepiction, isInside = labelConfig
+        xMin = min([x, x2])
+        xMax = max([x, x2])
+        yMin = min([y, y2])
+        yMax = max([y, y2])
+        newBox = self.boxManager.addBoxToDataFrame(self.imageData.data(role=Qt.DisplayRole), labelName, xMin, xMax, yMin, yMax, isOccluded, isTruncated, isGroupOf, isDepiction, isInside)
+        self.boxes.append(newBox)

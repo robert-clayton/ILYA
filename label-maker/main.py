@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 import ThemeManager
-from PySide2.QtCore     import Signal, Qt, QPointF
-from PySide2.QtGui      import QIcon, QColor
-from PySide2.QtWidgets  import QFrame, QVBoxLayout, QHBoxLayout, QMainWindow, QApplication, QSizePolicy, QSpacerItem, QGraphicsDropShadowEffect, QWidget
-from TopBar             import TopBar
-from FolderList         import FolderList
-from ImageList          import ImageList
-from ScrollBar          import ScrollBar
-from Canvas             import Canvas
-from BoxManager         import BoxManager
-from LabelConfigurator  import LabelConfigurator
+from PySide2.QtCore     import  Signal, Qt, QPointF
+from PySide2.QtGui      import  QIcon, QColor
+from PySide2.QtWidgets  import  QFrame, QVBoxLayout, QHBoxLayout, QMainWindow, QApplication, QSizePolicy, QSpacerItem, QGraphicsDropShadowEffect, QWidget
+from TopBar             import  TopBar
+from FolderList         import  FolderList
+from ImageList          import  ImageList
+from ScrollBar          import  ScrollBar
+from Canvas             import  Canvas
+from BoxManager         import  BoxManager
 
 class Central(QFrame):
     '''Initializes, styles, and connects the various classes'''
 
     def __init__(self):
         super().__init__()
-        # Initiate objects
+        # Objects
+        self.dropShadow     = QGraphicsDropShadowEffect(self)
         self.boxManager     = BoxManager()
         self.overallLayout  = QVBoxLayout(self)
         self.topBar         = TopBar()
@@ -34,15 +34,12 @@ class Central(QFrame):
         self.imageBar       = ScrollBar(self.imageList)
 
         # Styling
-        self.setStyleSheet('Central { '
-                            'background-color: ' + ThemeManager.BG + ';'
-                            'border-top-left-radius:     15px;'
-                            'border-bottom-left-radius:  15px;'
-                            'border-top-right-radius:    15px;'
-                            'border-bottom-right-radius: 15px;'
-                            'border-width: 0px;'
-                            'border-style: solid; }')
-        self.overallLayout.setMargin(0)
+        self.setStyleSheet('Central { background: transparent; }')
+        self.overallLayout.setMargin(20)
+        self.dropShadow.setOffset(QPointF(0,4))
+        self.dropShadow.setColor(QColor(0,0,0,100))
+        self.dropShadow.setBlurRadius(10)
+        self.setGraphicsEffect(self.dropShadow)
         self.overallLayout.setSpacing(0)
         self.contentLayout.setAlignment(Qt.AlignCenter)
         self.contentLayout.setMargin(0)        
@@ -93,39 +90,18 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.central = Central()
         self.setCentralWidget(self.central)
-
-    def closeEvent(self, event):
-        self.central.boxManager.saveDataFrame()
-        super().closeEvent(event)
-
-class MainWindowWrapper(QWidget):
-    def __init__(self):
-        super().__init__()
-        # Objects
-        self.layout = QHBoxLayout(self)
-        self.window = MainWindow()
-        self.dropShadow = QGraphicsDropShadowEffect(self)
-
-        # Layout
-        self.layout.addWidget(self.window)
-
-        # Styling
-        self.layout.setMargin(20)
-        self.dropShadow.setOffset(QPointF(0,4))
-        self.dropShadow.setColor(QColor(0,0,0,100))
-        self.dropShadow.setBlurRadius(10)
-        self.setGraphicsEffect(self.dropShadow)
         self.setWindowTitle('Label Maker')
         self.setWindowIcon(QIcon(ThemeManager.ICON_PATH))
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
 
     def closeEvent(self, event):
-        self.window.closeEvent(event)
+        self.central.boxManager.saveDataFrame()
+        super().closeEvent(event)
 
 def main():
     app = QApplication()
-    main = MainWindowWrapper()
+    main = MainWindow()
     main.show()
     app.exec_()
 

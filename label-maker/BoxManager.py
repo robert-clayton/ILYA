@@ -7,72 +7,55 @@ class BoxManager(QObject):
 
     def __init__(self):
         super().__init__()
-        self._dataFrame = pd.read_csv(ThemeManager.DATA_PATH)
-        self._labels = self.loadLabels()
+        self.dataFrame = pd.read_csv(ThemeManager.DATA_PATH)
 
-        # new box variables
-        self._newBoxLabelName   = 'Default' # Give Functionality to this
-        self._newBoxIsOccluded  = False
-        self._newBoxIsTruncated = False
-        self._newBoxIsGroupOf   = False
-        self._newBoxIsDepiction = False
-        self._newBoxIsInside    = False
+        # Recent box variables
+        self.recentLabelName      = self.loadLabels()[0] if self.loadLabels() else ''
+        self.recentIsOccluded     = False
+        self.recentIsTruncated    = False
+        self.recentIsGroupOf      = False
+        self.recentIsDepiction    = False
+        self.recentIsInside       = False
     
-    def setNewBoxLabelName(self, param):
-        self._newBoxLabelName = param
-        self.newBoxLabelNameChanged.emit(param)
-
-    def setNewBoxIsOccluded(self, param):
-        self._newBoxIsOccluded = param
-        self.newBoxIsOccludedChanged.emit(param)
-
-    def setNewBoxIsTruncated(self, param):
-        self._newBoxIsTruncated = param
-        self.newBoxIsTruncatedChanged.emit(param)
-    
-    def setNewBoxIsGroupOf(self, param):
-        self._newBoxIsGroupOf = param
-        self.newBoxIsGroupOfChanged.emit(param)
-
-    def setNewBoxIsDepiction(self, param):
-        self._newBoxIsDepiction = param
-        self.newBoxIsDepictionChanged.emit(param)
-    
-    def setNewBoxIsInside(self, param):
-        self._newBoxIsInside = param
-        self.newBoxIsInsideChanged.emit(param)
-
     def getBoxesForImage(self, imageID):
-        matches = self._dataFrame.loc[self._dataFrame['ImageID'] == imageID]
+        matches = self.dataFrame.loc[self.dataFrame['ImageID'] == imageID]
         return [Box(*matchList) for matchList in matches.values.tolist()]
 
-    def addBoxToDataFrame(self, imageID, xMin, xMax, yMin, yMax):
+    def addBoxToDataFrame(self, imageID, labelName, xMin, xMax, yMin, yMax, isOccluded, isTruncated, isGroupOf, isDepiction, isInside):
         box =   [imageID, 
                 'label-maker', 
-                self._newBoxLabelName,
+                labelName,
                 1.0,
                 xMin, xMax, yMin, yMax,
-                self._newBoxIsOccluded,
-                self._newBoxIsTruncated,
-                self._newBoxIsGroupOf,
-                self._newBoxIsDepiction,
-                self._newBoxIsInside]
-        self._dataFrame.loc[len(self._dataFrame)] = box
+                isOccluded,
+                isTruncated,
+                isGroupOf,
+                isDepiction,
+                isInside]
+        self.dataFrame.loc[len(self.dataFrame)] = box
+
+        self.recentLabelName      = labelName
+        self.recentIsOccluded     = isOccluded
+        self.recentIsTruncated    = isTruncated
+        self.recentIsGroupOf      = isGroupOf
+        self.recentIsDepiction    = isDepiction
+        self.recentIsInside       = isInside
+
         return Box(*box)
 
     def saveDataFrame(self):
-        self._dataFrame.to_csv(ThemeManager.DATA_PATH, index=False)
+        self.dataFrame.to_csv(ThemeManager.DATA_PATH, index=False)
 
     def loadLabels(self):
         with open(ThemeManager.LABELS_PATH, 'r') as labels:
-            return [label.rstrip('\n') for label in labels]
+            return [label.strip() for label in labels]
 
-    newBoxLabelNameChanged    = Signal(object)
-    newBoxIsOccludedChanged   = Signal(object)
-    newBoxIsTruncatedChanged  = Signal(object)
-    newBoxIsGroupOfChanged    = Signal(object)
-    newBoxIsDepictionChanged  = Signal(object)
-    newBoxIsInsideChanged     = Signal(object)
+    def getRecentLabelName(self):     return self.recentLabelName
+    def getRecentIsOccluded(self):    return self.recentIsOccluded
+    def getRecentIsTruncated(self):   return self.recentIsTruncated
+    def getRecentIsGroupOf(self):     return self.recentIsGroupOf
+    def getRecentIsDepiction(self):   return self.recentIsDepiction
+    def getRecentIsInside(self):      return self.recentIsInside
 
 class Box():
     '''A single row to add to the dataset'''

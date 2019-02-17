@@ -3,15 +3,18 @@ import ThemeManager
 from PIL                import Image
 from PySide2.QtWidgets  import QListView, QStyledItemDelegate, QStyle, QFrame, QAbstractItemView
 from PySide2.QtCore     import QSize, Signal, QThread, Qt
-from PySide2.QtGui      import QImageReader, QStandardItemModel, QStandardItem, QPixmap
+from PySide2.QtGui      import QImageReader, QStandardItemModel, QStandardItem, QPixmap, QPainter, QBrush
 
 class ImageList(QListView):
     def __init__(self, model = None):
         super().__init__()
+        # Objects
+        self.brush          = QBrush()
+
+        # Styling
         if model: self.setModel(model)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setFrameStyle(QFrame.NoFrame)
-        self.setStyleSheet('background-color: Transparent;')
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -19,6 +22,8 @@ class ImageList(QListView):
         self.setItemDelegate(Thumbnail())
         self.setLayoutMode(QListView.Batched)
         self.setBatchSize(10)
+        self.brush.setColor(ThemeManager.BG_QC)
+        self.brush.setStyle(Qt.SolidPattern)
     
     def populate(self, folder):
         self.populateThread = Populate(folder)
@@ -29,6 +34,13 @@ class ImageList(QListView):
         if event.button() == Qt.LeftButton:
             index = self.indexAt(event.pos())
             self.selectedImageChanged.emit(index)
+
+    def paintEvent(self, event):
+        painter = QPainter(self.viewport())
+        painter.setBrush(self.brush)
+        painter.setPen(Qt.NoPen)
+        painter.drawRect(event.rect())
+        super().paintEvent(event)
     
     selectedImageChanged = Signal(object)
 

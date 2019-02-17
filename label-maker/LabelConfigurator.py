@@ -1,23 +1,31 @@
-import ThemeManager
-from PySide2.QtWidgets import QFrame, QDialog, QVBoxLayout
-from PySide2.QtCore import Signal, QSize, Qt
-from PySide2.QtGui import QImageReader, QPainter, QPen, QFont, QPixmap, QFontMetrics
+import ThemeManager, ListDelegate
+from PySide2.QtWidgets  import  QFrame, QDialog, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QListView
+from PySide2.QtCore     import  Signal, QSize, Qt, QStringListModel
+from PySide2.QtGui      import  QImageReader, QPainter, QPen, QFont, QPixmap, QFontMetrics
 
 class LabelConfigurator(QDialog):
-    def __init__(self, boxManager):
+    def __init__(self, boxManager, spawnPos):
         super().__init__()
+        # Variables
+        self.spawnPos           = spawnPos
+
         # Objects
         self.boxManager         = boxManager
         self.layout             = QVBoxLayout(self)
+        self.topLayout          = QHBoxLayout()
         self.settingsLayout     = QHBoxLayout()
         self.title              = QLabel('Label Configurator')
-        self.isOccludedButton   = Check('Occluded', False)
-        self.isTruncatedButton  = Check('Truncated', False)
-        self.isGroupOfButton    = Check('Group Of', False)
-        self.isDepictionButton  = Check('Depiction', False)
-        self.isInsideButton     = Check('Inside', False)
+        self.isOccludedButton   = Check('Occluded',     boxManager.getRecentIsOccluded())
+        self.isTruncatedButton  = Check('Truncated',    boxManager.getRecentIsTruncated())
+        self.isGroupOfButton    = Check('Group Of',     boxManager.getRecentIsGroupOf())
+        self.isDepictionButton  = Check('Depiction',    boxManager.getRecentIsDepiction())
+        self.isInsideButton     = Check('Inside',       boxManager.getRecentIsInside())
+        self.cancelButton       = QPushButton('Cancel')
+        self.labelsModel        = QStringListModel()
+        self.labelsView         = QListView()
 
         # Layout
+        self.setWindowFlags(Qt.Popup)
         self.settingsLayout.setAlignment(Qt.AlignTop | Qt.AlignCenter)
         self.settingsLayout.setMargin(0)
         self.settingsLayout.addWidget(self.isOccludedButton)
@@ -25,25 +33,59 @@ class LabelConfigurator(QDialog):
         self.settingsLayout.addWidget(self.isGroupOfButton)
         self.settingsLayout.addWidget(self.isDepictionButton)
         self.settingsLayout.addWidget(self.isInsideButton)
-        self.layout.addWidget(self.title)
+        self.topLayout.addWidget(self.title)
+        self.topLayout.addWidget(self.cancelButton)
+        self.layout.addLayout(self.topLayout)
+        self.layout.addWidget(self.labelsView)
         self.layout.addLayout(self.settingsLayout)
 
         # Styling
+        self.setStyleSheet('LabelConfigurator { '
+                            'background-color: ' + ThemeManager.BG_L1 + ';'
+                            'border-top-left-radius:     ' + str(ThemeManager.CURVE) + 'px;'
+                            'border-bottom-left-radius:  ' + str(ThemeManager.CURVE) + 'px;'
+                            'border-top-right-radius:    ' + str(ThemeManager.CURVE) + 'px;'
+                            'border-bottom-right-radius: ' + str(ThemeManager.CURVE) + 'px;'
+                            'border-width: 0px;'
+                            'border-style: solid;'
+                            '}')
         self.layout.setContentsMargins(5,10,5,10)
         self.layout.setSpacing(15)
+        self.labelsModel.setStringList(boxManager.loadLabels())
+        self.labelsView.setStyleSheet('QListView { '
+            'background: transparent;'
+            '}')
+        self.labelsView.setFrameStyle(QFrame.NoFrame)
+        self.labelsView.setModel(self.labelsModel)
+        self.labelsView.setItemDelegate(ListDelegate.ListDelegate())
+        
+        index = None
+        try:
+            row     = self.labelsModel.stringList().index(boxManager.getRecentLabelName())
+            index   = self.labelsModel.index(row)
+        except ValueError:
+            index   = self.labelsModel.index(0)
+        if index is not None:
+            self.labelsView.setCurrentIndex(index)
 
         # Connections
-        self.isOccludedButton.stateChanged.connect(boxManager.setNewBoxIsOccluded)
-        self.isTruncatedButton.stateChanged.connect(boxManager.setNewBoxIsTruncated)
-        self.isGroupOfButton.stateChanged.connect(boxManager.setNewBoxIsGroupOf)
-        self.isDepictionButton.stateChanged.connect(boxManager.setNewBoxIsDepiction)
-        self.isInsideButton.stateChanged.connect(boxManager.setNewBoxIsInside)
+        self.cancelButton.clicked.connect(self.reject)
     
     def showEvent(self, event):
         super().showEvent(event)
-        self.move(self.pos() +
-                QPoint(self.width() / 2, self.height() / 2)
-            )
+        self.move(self.spawnPos)
+
+    def closeEvent(self, event):
+        labelConfig = (self.labelsView.selectedIndexes()[0].data(role=Qt.DisplayRole), 
+                        self.isOccludedButton.getEnabled(), 
+                        self.isTruncatedButton.getEnabled(), 
+                        self.isGroupOfButton.getEnabled(), 
+                        self.isDepictionButton.getEnabled(), 
+                        self.isInsideButton.getEnabled())
+        self.labelAccepted.emit(labelConfig)
+        super().closeEvent(event)
+    
+    labelAccepted = Signal(object)
 
 class Check(QFrame):
     def __init__(self, name, default = False):
@@ -66,6 +108,9 @@ class Check(QFrame):
         
         self.image.setScaledSize(self.imageSize)
         self.setFixedSize(self.imageSize.width() + self.padding + self.nameWidth, self.imageSize.height())
+    
+    def getEnabled(self):
+        return self.enabled
     
     def setPadding(self, param):
         self.padding = param
