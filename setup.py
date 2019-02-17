@@ -1,23 +1,23 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from os import path as op
 from setuptools import setup
 
-with open(op.join(op.abspath(op.dirname(__file__)), 'requirements.txt'), encoding='utf-8') as f:
+with open(op.join(op.abspath(op.dirname(__file__)), 'requirements.txt'), encoding='utf-16') as f:
     requirements = f.read().split('\n')
 
 with open('README.md') as f:
     readme = f.read()
 
-with open('VERSION') as f:
+with open('VERSION.txt') as f:
     version = str(f.read())
 
 setup(
-    name='label-maker',
+    name='ILYA',
     author='Robert Clayton',
     author_email='rclayton@theia.io',
     version=version,
-    description='Data preparation bounding box-based machine learning',
-    url='https://github.com/robert-clayton/label-maker/',
+    description='Data preparation for bounding box based machine learning',
+    url='https://github.com/robert-clayton/ILYA/tree/master',
     license='GPLv3',
     classifiers=[
         'Development Status :: 3 - Alpha',
