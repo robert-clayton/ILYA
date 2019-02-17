@@ -12,14 +12,14 @@ class LabelConfigurator(QDialog):
         # Objects
         self.boxManager         = boxManager
         self.layout             = QVBoxLayout(self)
-        self.topLayout          = QHBoxLayout()
-        self.settingsLayout     = QHBoxLayout()
-        self.title              = QLabel('Label Configurator')
+        self.contentLayout      = QHBoxLayout()
+        self.settingsLayout     = QVBoxLayout()
         self.isOccludedButton   = Check('Occluded',     boxManager.getRecentIsOccluded())
         self.isTruncatedButton  = Check('Truncated',    boxManager.getRecentIsTruncated())
         self.isGroupOfButton    = Check('Group Of',     boxManager.getRecentIsGroupOf())
         self.isDepictionButton  = Check('Depiction',    boxManager.getRecentIsDepiction())
         self.isInsideButton     = Check('Inside',       boxManager.getRecentIsInside())
+        self.acceptButton       = QPushButton('Accept')
         self.cancelButton       = QPushButton('Cancel')
         self.labelsModel        = QStringListModel()
         self.labelsView         = QListView()
@@ -33,11 +33,13 @@ class LabelConfigurator(QDialog):
         self.settingsLayout.addWidget(self.isGroupOfButton)
         self.settingsLayout.addWidget(self.isDepictionButton)
         self.settingsLayout.addWidget(self.isInsideButton)
-        self.topLayout.addWidget(self.title)
-        self.topLayout.addWidget(self.cancelButton)
-        self.layout.addLayout(self.topLayout)
-        self.layout.addWidget(self.labelsView)
-        self.layout.addLayout(self.settingsLayout)
+        self.settingsLayout.addStretch(1)
+        self.settingsLayout.addWidget(self.acceptButton)
+        self.settingsLayout.addWidget(self.cancelButton)
+        self.contentLayout.addWidget(self.labelsView)
+        self.contentLayout.addLayout(self.settingsLayout)
+        self.layout.addLayout(self.contentLayout)
+        
 
         # Styling
         self.setStyleSheet('LabelConfigurator { '
@@ -48,13 +50,24 @@ class LabelConfigurator(QDialog):
                             'border-bottom-right-radius: ' + str(ThemeManager.CURVE) + 'px;'
                             'border-width: 0px;'
                             'border-style: solid;'
+                            '}'
+                            'QPushButton {'
+                            'background-color: ' + ThemeManager.BG_L2 + ';'
+                            'border-radius: 10px;'
+                            'color: ' + ThemeManager.LABEL + ';'
+                            'font-size: 14px;'
+                            '}'
+                            'QPushButton:hover {'
+                            'background-color: ' + ThemeManager.BG_L3 + ';'
+                            '}'
+                            'QListView { '
+                            'background-color: ' + ThemeManager.BG_L2 + ';'
                             '}')
-        self.layout.setContentsMargins(5,10,5,10)
-        self.layout.setSpacing(15)
+        self.layout.setMargin(20)
+        self.layout.setSpacing(10)
+        self.contentLayout.setMargin(0)
         self.labelsModel.setStringList(boxManager.loadLabels())
-        self.labelsView.setStyleSheet('QListView { '
-            'background: transparent;'
-            '}')
+        self.labelsView.setFixedWidth(80)
         self.labelsView.setFrameStyle(QFrame.NoFrame)
         self.labelsView.setModel(self.labelsModel)
         self.labelsView.setItemDelegate(ListDelegate.ListDelegate())
@@ -69,6 +82,7 @@ class LabelConfigurator(QDialog):
             self.labelsView.setCurrentIndex(index)
 
         # Connections
+        self.acceptButton.clicked.connect(self.close)
         self.cancelButton.clicked.connect(self.reject)
     
     def showEvent(self, event):
@@ -84,6 +98,9 @@ class LabelConfigurator(QDialog):
                         self.isInsideButton.getEnabled())
         self.labelAccepted.emit(labelConfig)
         super().closeEvent(event)
+
+    def getLabelConfig(self):
+        return 
     
     labelAccepted = Signal(object)
 

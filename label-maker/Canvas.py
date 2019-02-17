@@ -25,6 +25,7 @@ class Canvas(QFrame):
         self.messageResetTimer  = QTimer()
         self.brush              = QBrush()
         self.pen                = QPen()
+        self.font = QFont('Arial', 8)
         self.boxManager         = boxManager
 
         # Styling
@@ -75,7 +76,6 @@ class Canvas(QFrame):
         painter.drawRect(0, 0, self.size().width() / 2, self.size().height()) # Left Side
         painter.drawRect(0, 0, self.size().width(), self.size().height() / 2) # Top Side
         painter.drawRoundedRect(self.rect(), ThemeManager.CURVE, ThemeManager.CURVE)
-
         painter.restore()
 
         # If image is set
@@ -100,7 +100,7 @@ class Canvas(QFrame):
                     y2 = (y2 * self.scaledImage.size().height() + self.dy / 2) - 2
 
                     # Setup painter's brush and pen colors
-                    self.brush.setColor(ThemeManager.ACCENT_VLOW_OPACITY_QC)
+                    self.brush.setColor(ThemeManager.ACCENT_LOW_OPACITY_QC)
                     self.brush.setStyle(Qt.SolidPattern)
                     self.pen.setColor(ThemeManager.ACCENT_QC)
                     painter.setBrush(self.brush)
@@ -111,35 +111,33 @@ class Canvas(QFrame):
                 # Paint existing boxes
                 for box in self.boxes:
                     painter.save()
+
+                    # Draw box's rect
                     x, x2, y, y2 = box.getRect()
-                    # Convert % to xy coords, account for off by one error, and draw box's rect
                     x  = (x * self.scaledImage.size().width() + self.dx / 2) - 1
                     y  = (y * self.scaledImage.size().height() + self.dy / 2) - 1
                     x2 = (x2 * self.scaledImage.size().width() + self.dx / 2) - 1
                     y2 = (y2 * self.scaledImage.size().height() + self.dy / 2) - 2
-                    painter.drawRect(QRect(QPoint(x, y), QPoint(x2, y2)))
-
-                    # Setup painter's brush and pen colors
-                    self.brush.setColor(ThemeManager.ACCENT_LOW_OPACITY_QC)
+                    self.brush.setColor(ThemeManager.ACCENT_VLOW_OPACITY_QC)
                     self.brush.setStyle(Qt.SolidPattern)
                     self.pen.setColor(ThemeManager.ACCENT_QC)
                     painter.setBrush(self.brush)
                     painter.setPen(self.pen)
                     painter.drawRect(QRect(QPoint(x, y), QPoint(x2, y2)))
 
-                    # Draw box's label
-                    pen = QPen()
-                    font = QFont('Arial', 8)
-                    pen.setColor(ThemeManager.LABEL_QC)
-                    painter.setPen(pen)
+                    # Draw label BG
+                    painter.setPen(Qt.NoPen)
+                    self.brush.setColor(ThemeManager.ACCENT_QC)
+                    painter.setBrush(self.brush)
+                    labelWidth = QFontMetrics(self.font).width(box.getLabel())
+                    labelHeight = QFontMetrics(self.font).height()
+                    painter.drawRect(x, y, labelWidth + 4, labelHeight)
+
+                    # Draw label
+                    self.pen.setColor(ThemeManager.BLACK_QC)
+                    painter.setPen(self.pen)
                     painter.drawText(x + 2, y + 11, box.getLabel())
                     painter.restore()
-
-            # TODO: Move this logic out of Paint Event
-            # Image this index was referencing was deleted
-            else: 
-                self.boxes = []
-                self.imageData = None
 
         if self.message:
             painter.save()
@@ -150,8 +148,6 @@ class Canvas(QFrame):
             painter.setPen(self.pen)
             painter.drawText((self.width() - messageWidth) / 2, self.height() * .9, self.message)
             painter.restore()
-
-        painter.end()
 
     def translateMousePosToPercent(self, event):
         '''Takes a given mouse event and translates the coordinates into image-relative percentages.'''
