@@ -1,14 +1,16 @@
 import ThemeManager
-from PySide2.QtWidgets import QFrame, QVBoxLayout
+from PySide2.QtWidgets import QFrame, QDialog, QVBoxLayout
 from PySide2.QtCore import Signal, QSize, Qt
 from PySide2.QtGui import QImageReader, QPainter, QPen, QFont, QPixmap, QFontMetrics
 
-class LabelConfigurator(QFrame):
+class LabelConfigurator(QDialog):
     def __init__(self, boxManager):
         super().__init__()
         # Objects
         self.boxManager         = boxManager
         self.layout             = QVBoxLayout(self)
+        self.settingsLayout     = QHBoxLayout()
+        self.title              = QLabel('Label Configurator')
         self.isOccludedButton   = Check('Occluded', False)
         self.isTruncatedButton  = Check('Truncated', False)
         self.isGroupOfButton    = Check('Group Of', False)
@@ -16,12 +18,15 @@ class LabelConfigurator(QFrame):
         self.isInsideButton     = Check('Inside', False)
 
         # Layout
-        self.layout.setAlignment(Qt.AlignTop | Qt.AlignCenter)
-        self.layout.addWidget(self.isOccludedButton)
-        self.layout.addWidget(self.isTruncatedButton)
-        self.layout.addWidget(self.isGroupOfButton)
-        self.layout.addWidget(self.isDepictionButton)
-        self.layout.addWidget(self.isInsideButton)
+        self.settingsLayout.setAlignment(Qt.AlignTop | Qt.AlignCenter)
+        self.settingsLayout.setMargin(0)
+        self.settingsLayout.addWidget(self.isOccludedButton)
+        self.settingsLayout.addWidget(self.isTruncatedButton)
+        self.settingsLayout.addWidget(self.isGroupOfButton)
+        self.settingsLayout.addWidget(self.isDepictionButton)
+        self.settingsLayout.addWidget(self.isInsideButton)
+        self.layout.addWidget(self.title)
+        self.layout.addLayout(self.settingsLayout)
 
         # Styling
         self.layout.setContentsMargins(5,10,5,10)
@@ -33,6 +38,12 @@ class LabelConfigurator(QFrame):
         self.isGroupOfButton.stateChanged.connect(boxManager.setNewBoxIsGroupOf)
         self.isDepictionButton.stateChanged.connect(boxManager.setNewBoxIsDepiction)
         self.isInsideButton.stateChanged.connect(boxManager.setNewBoxIsInside)
+    
+    def showEvent(self, event):
+        super().showEvent(event)
+        self.move(self.pos() +
+                QPoint(self.width() / 2, self.height() / 2)
+            )
 
 class Check(QFrame):
     def __init__(self, name, default = False):

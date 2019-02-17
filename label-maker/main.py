@@ -31,7 +31,6 @@ class Central(QFrame):
         self.imageList      = ImageList()
         self.imageLayout    = QHBoxLayout(self.imageArea)
         self.imageBar       = ScrollBar(self.imageList)
-        self.labelConfig    = LabelConfigurator(self.boxManager)
 
         # Styling
         self.setStyleSheet('Central { '
@@ -67,9 +66,8 @@ class Central(QFrame):
         self.imageLayout.addWidget(self.imageBar)
         self.selectorLayout.addWidget(self.folderArea, 15)
         self.selectorLayout.addWidget(self.imageArea, 85)
-        self.contentLayout.addWidget(self.selectorArea, 25)
-        self.contentLayout.addWidget(self.canvas, 65)
-        self.contentLayout.addWidget(self.labelConfig, 10)
+        self.contentLayout.addWidget(self.selectorArea, 30)
+        self.contentLayout.addWidget(self.canvas, 70)
         self.overallLayout.addLayout(self.contentLayout)
         self.overallLayout.insertWidget(0, self.topBar)
 
