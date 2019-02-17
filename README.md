@@ -1,4 +1,4 @@
-# Image Labels You Affix - ILYA
+# Image Labels You Affix - ILYA [![Licensed under the GPL3 License](https://img.shields.io/badge/License-GPL3-blue.svg)](https://github.com/robert-clayton/ILYA/edit/master/LICENSE)
 
 A tool for labeling bounding boxes on images to be used for ML training.
 
