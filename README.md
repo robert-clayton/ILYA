@@ -1,4 +1,4 @@
-# Image Labels You Affix - ILYA [![](https://badgen.net/github/license/robert-clayton/ILYA)](https://github.com/robert-clayton/ILYA/edit/master/LICENSE.txt) ![](https://badgen.net/github/last-commit/robert-clayton/ILYA)
+# Image Labels You Affix - ILYA [![](https://badgen.net/github/license/robert-clayton/ILYA)](https://github.com/robert-clayton/ILYA/edit/master/LICENSE.txt) [![](https://badgen.net/github/last-commit/robert-clayton/ILYA)](https://github.com/robert-clayton/ILYA/commits/master)
 
 A tool for labeling bounding boxes on images to be used for ML training.
 
@@ -13,7 +13,7 @@ A tool for labeling bounding boxes on images to be used for ML training.
 
 # How To Use
 
-- Put images into a subfolder within `./Images/`
+- Put images into a subfolder within `Images`
 - Run app with `python3 main.py`
 - Select the folder you want to label
 - Press the `Load Images` button to begin
