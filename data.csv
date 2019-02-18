@@ -1,1 +1,2 @@
 ImageID,Source,LabelName,Confidence,XMin,XMax,YMin,YMax,IsOccluded,IsTruncated,IsGroupOf,IsDepiction,IsInside
+ar10g4-I_m_melting-r342ch16nsg21.jpg,ILYA,cat,1.0,0.1572769953051643,0.8380281690140845,0.08551724137931034,0.5806896551724138,False,False,False,False,False

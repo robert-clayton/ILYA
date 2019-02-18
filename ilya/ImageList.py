@@ -1,9 +1,11 @@
 import os
-import ThemeManager
-from PIL                import Image
-from PySide2.QtWidgets  import QListView, QStyledItemDelegate, QStyle, QFrame, QAbstractItemView
-from PySide2.QtCore     import QSize, Signal, QThread, Qt
-from PySide2.QtGui      import QImageReader, QStandardItemModel, QStandardItem, QPixmap, QPainter, QBrush
+from PIL import Image
+from PySide2.QtWidgets import QListView, QStyledItemDelegate, \
+                            QStyle, QFrame, QAbstractItemView
+from PySide2.QtCore import QSize, Signal, QThread, Qt
+from PySide2.QtGui import QImageReader, QStandardItemModel, \
+                        QStandardItem, QPixmap, QPainter, QBrush
+from . import ThemeManager
 
 class ImageList(QListView):
     def __init__(self, model = None):

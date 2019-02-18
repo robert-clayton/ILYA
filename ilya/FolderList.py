@@ -1,8 +1,8 @@
 import os
-import ThemeManager, ListDelegate
 from PySide2.QtCore     import Qt, Signal, QSize
 from PySide2.QtWidgets  import QListView, QFrame, QAbstractItemView
 from PySide2.QtGui      import QStandardItemModel, QStandardItem, QPainter, QBrush
+from . import ThemeManager, ListDelegate
 
 class FolderList(QListView):
     def __init__(self):

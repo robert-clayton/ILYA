@@ -1,6 +1,6 @@
 import pandas as pd
-import ThemeManager
-from PySide2.QtCore import Signal, QObject
+from PySide2.QtCore import QObject
+from . import ThemeManager
 
 class BoxManager(QObject):
     '''Handles adding and removing rows to and from the dataset'''
@@ -23,7 +23,7 @@ class BoxManager(QObject):
 
     def addBoxToDataFrame(self, imageID, labelName, xMin, xMax, yMin, yMax, isOccluded, isTruncated, isGroupOf, isDepiction, isInside):
         box =   [imageID, 
-                'label-maker', 
+                'ILYA', 
                 labelName,
                 1.0,
                 xMin, xMax, yMin, yMax,

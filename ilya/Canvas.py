@@ -1,11 +1,10 @@
 import os
-from PySide2.QtCore     import QTimer, Signal, QSize, QRect, QPoint, Qt, QPersistentModelIndex
-from PySide2.QtGui      import QPainter, QPen, QFont, QFontMetrics, QPixmap, QColor, QBrush, QPainterPath
-from PySide2.QtWidgets  import QFrame
-from BoxManager         import BoxManager
-from DeletePopup        import ConfirmDelete
-from LabelConfigurator  import LabelConfigurator
-import ThemeManager
+from PySide2.QtCore import QTimer, Signal, QSize, QRect, \
+                        QPoint, Qt, QPersistentModelIndex
+from PySide2.QtGui import QPainter, QPen, QFont, QFontMetrics, \
+                        QPixmap, QColor, QBrush, QPainterPath
+from PySide2.QtWidgets import QFrame
+from . import ThemeManager, LabelConfigurator
 
 class Canvas(QFrame):
     '''Takes care of showing the currently focused image and the main app use case of creating labels'''
@@ -25,7 +24,7 @@ class Canvas(QFrame):
         self.messageResetTimer  = QTimer()
         self.brush              = QBrush()
         self.pen                = QPen()
-        self.font = QFont('Arial', 8)
+        self.font               = QFont('Arial', 8)
         self.boxManager         = boxManager
 
         # Styling
@@ -193,7 +192,7 @@ class Canvas(QFrame):
     def handleDrawnBox(self, spawnPos):
         '''Called by mouse release event. Lets the Box Manager know to add box to data frame.'''
         if self.drawing and self.checkBoxValid(self.drawingRect):
-            newConfig = LabelConfigurator(self.boxManager, spawnPos)
+            newConfig = LabelConfigurator.LabelConfigurator(self.boxManager, spawnPos)
             newConfig.labelAccepted.connect(self.addNewBox)
             newConfig.exec_()
         self.drawingRect = None

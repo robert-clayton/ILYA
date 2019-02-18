@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
-import ThemeManager
-from PySide2.QtCore     import  Signal, Qt, QPointF
-from PySide2.QtGui      import  QIcon, QColor
-from PySide2.QtWidgets  import  QFrame, QVBoxLayout, QHBoxLayout, QMainWindow, QApplication, QSizePolicy, QSpacerItem, QGraphicsDropShadowEffect, QWidget
-from TopBar             import  TopBar
-from FolderList         import  FolderList
-from ImageList          import  ImageList
-from ScrollBar          import  ScrollBar
-from Canvas             import  Canvas
-from BoxManager         import  BoxManager
+from PySide2.QtCore import  Signal, Qt, QPointF
+from PySide2.QtGui import  QIcon, QColor
+from PySide2.QtWidgets import  QFrame, QVBoxLayout, QHBoxLayout, \
+                            QMainWindow, QApplication, QSizePolicy, \
+                            QSpacerItem, QGraphicsDropShadowEffect
+from ILYA import ThemeManager, TopBar, FolderList, \
+            ImageList, ScrollBar, Canvas, BoxManager
 
 class Central(QFrame):
     '''Initializes, styles, and connects the various classes'''
@@ -16,31 +13,31 @@ class Central(QFrame):
     def __init__(self):
         super().__init__()
         # Objects
-        self.dropShadow     = QGraphicsDropShadowEffect(self)
-        self.boxManager     = BoxManager()
-        self.overallLayout  = QVBoxLayout(self)
-        self.topBar         = TopBar()
-        self.contentLayout  = QHBoxLayout()
-        self.selectorArea   = QFrame()
+        self.overallLayout = QVBoxLayout(self)
+        self.contentLayout = QHBoxLayout()
+        self.dropShadow = QGraphicsDropShadowEffect(self)
+        self.boxManager = BoxManager.BoxManager()
+        self.topBar = TopBar.TopBar()
+        self.selectorArea = QFrame()
         self.selectorLayout = QVBoxLayout(self.selectorArea)
-        self.folderArea     = QFrame()
-        self.folderLayout   = QHBoxLayout(self.folderArea)
-        self.folderList     = FolderList()
-        self.folderBar      = ScrollBar(self.folderList)
-        self.canvas         = Canvas(self.boxManager)
-        self.imageArea      = QFrame()
-        self.imageList      = ImageList()
-        self.imageLayout    = QHBoxLayout(self.imageArea)
-        self.imageBar       = ScrollBar(self.imageList)
+        self.folderArea = QFrame()
+        self.folderLayout = QHBoxLayout(self.folderArea)
+        self.folderList = FolderList.FolderList()
+        self.folderBar = ScrollBar.ScrollBar(self.folderList)
+        self.canvas = Canvas.Canvas(self.boxManager)
+        self.imageArea = QFrame()
+        self.imageList = ImageList.ImageList()
+        self.imageLayout = QHBoxLayout(self.imageArea)
+        self.imageBar = ScrollBar.ScrollBar(self.imageList)
 
         # Styling
         self.setStyleSheet('Central { background: transparent; }')
         self.overallLayout.setMargin(20)
+        self.overallLayout.setSpacing(0)
         self.dropShadow.setOffset(QPointF(0,4))
         self.dropShadow.setColor(QColor(0,0,0,100))
         self.dropShadow.setBlurRadius(10)
         self.setGraphicsEffect(self.dropShadow)
-        self.overallLayout.setSpacing(0)
         self.contentLayout.setAlignment(Qt.AlignCenter)
         self.contentLayout.setMargin(0)        
         self.contentLayout.setSpacing(0)

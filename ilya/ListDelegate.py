@@ -1,15 +1,15 @@
-import ThemeManager
-from PySide2.QtCore     import  Qt, QSize
-from PySide2.QtGui      import  QColor, QFont, QFontMetrics, QPen, QBrush
-from PySide2.QtWidgets  import  QStyledItemDelegate, QStyle
+from PySide2.QtCore import  Qt, QSize
+from PySide2.QtGui import  QColor, QFont, QFontMetrics, QPen, QBrush
+from PySide2.QtWidgets import  QStyledItemDelegate, QStyle
+from . import ThemeManager
 
 class ListDelegate(QStyledItemDelegate):
     def __init__(self, height=20):
         super().__init__()
         self.height = height
-        self.font   = QFont('Arial', 10)
-        fontHeight  = QFontMetrics(self.font).height()
-        self.y      = self.height / 2 + fontHeight / 4 + fontHeight / 8 - 1
+        self.font = QFont('Arial', 10)
+        fontHeight = QFontMetrics(self.font).height()
+        self.y = self.height / 2 + fontHeight / 4 + fontHeight / 8 - 1
 
     def sizeHint(self, option, index):
         return QSize(option.rect.width(), self.height)

@@ -1,5 +1,5 @@
-from PySide2.QtGui import QColor
 import os
+from PySide2.QtGui import QColor
 
 CURRENT_DIR         = os.getcwd()
 RESOURCES_PATH      = os.path.join(CURRENT_DIR,     'Resources')

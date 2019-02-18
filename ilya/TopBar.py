@@ -1,9 +1,9 @@
 import os
-import ThemeManager
 from PySide2            import *
 from PySide2.QtCore     import *
 from PySide2.QtGui      import *
 from PySide2.QtWidgets  import *
+from . import ThemeManager
 
 class TopBar(QFrame):
     '''Interactable bar at the top of the application'''

@@ -1,7 +1,7 @@
-import ThemeManager, ListDelegate
 from PySide2.QtWidgets  import  QFrame, QDialog, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QListView
 from PySide2.QtCore     import  Signal, QSize, Qt, QStringListModel
 from PySide2.QtGui      import  QImageReader, QPainter, QPen, QFont, QPixmap, QFontMetrics
+from . import ThemeManager, ListDelegate
 
 class LabelConfigurator(QDialog):
     def __init__(self, boxManager, spawnPos):
