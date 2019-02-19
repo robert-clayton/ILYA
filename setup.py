@@ -33,9 +33,10 @@ setup(
     long_description_content_type="text/markdown",
     entry_points={
         'console_scripts': [
-            'ilya=ILYA.ilya:main'
+            'ilya=ILYA.ilya:main',
+            'ILYA=ILYA.ilya:main'
         ]
     },
     packages=['ILYA'],
-    scripts=['ilya/ilya.py']
+    scripts=['ILYA/ilya.py']
 )
