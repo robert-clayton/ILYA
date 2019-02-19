@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from PySide2.QtCore import QObject
 from . import ThemeManager
