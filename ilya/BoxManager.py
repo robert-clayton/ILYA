@@ -49,7 +49,9 @@ class BoxManager(QObject):
 
     def loadLabels(self):
         if not os.path.exists(ThemeManager.LABELS_PATH):
-            print('Warning: Labels file not found in the current directory. ILYA will not function properly.')
+            print('Warning: Labels file not found in the current directory')
+            print('\tILYA created an example labels file in the current directory named labels.txt')
+            print('\tILYA needs this file to be populated to function properly')
             with open(ThemeManager.LABELS_PATH, 'w') as f:
                 f.write('default')
         with open(ThemeManager.LABELS_PATH, 'r') as labels:
@@ -57,7 +59,8 @@ class BoxManager(QObject):
 
     def loadCSV(self):
         if not os.path.exists(ThemeManager.DATA_PATH):
-            print('Warning: Data file not found in the current directory. ILYA will create an empty CSV.')
+            print('Warning: Data file not found in the current directory')
+            print('\tILYA created an empty CSV named data.csv')
             with open(ThemeManager.DATA_PATH, 'w') as f:
                 f.write('ImageID,Source,LabelName,Confidence,XMin,XMax,YMin,YMax,IsOccluded,IsTruncated,IsGroupOf,IsDepiction,IsInside')
 
