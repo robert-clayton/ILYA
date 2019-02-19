@@ -58,7 +58,7 @@ class BoxManager(QObject):
     def loadCSV(self):
         if not os.path.exists(ThemeManager.DATA_PATH):
             print('Warning: Data file not found in the current directory. ILYA will create an empty CSV.')
-            os.makenod(ThemeManager.DATA_PATH)
+            os.mknod(ThemeManager.DATA_PATH)
             with open(ThemeManager.DATA_PATH, 'w') as f:
                 f.write('ImageID,Source,LabelName,Confidence,XMin,XMax,YMin,YMax,IsOccluded,IsTruncated,IsGroupOf,IsDepiction,IsInside')
 
