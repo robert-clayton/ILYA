@@ -2,7 +2,7 @@
 from os import path as op
 from setuptools import setup
 
-with open(op.join(op.abspath(op.dirname(__file__)), 'requirements.txt'), encoding='utf-16') as f:
+with open(op.join(op.abspath(op.dirname(__file__)), 'requirements.txt'), encoding='utf-8') as f:
     requirements = f.read().split('\n')
 
 with open('README.md') as f:
