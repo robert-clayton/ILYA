@@ -4,24 +4,23 @@ A tool for labeling bounding boxes on images to be used for ML training.
 
 # Requirements
 
-- Python 3.x
+- Python 3.6
 
 # Installation
 
-- Open `cmd` and `cd` into the project folder
-- Run `pip install -r requirements.txt`
+- In a terminal, run `pip install git+https://github.com/robert-clayton/ILYA`
 
 # How To Use
 
-- Put images into a subfolder within `Images`
-- Run app with `python3 main.py`
-- Select the folder you want to label
-- Press the `Load Images` button to begin
+- `cd` into desired directory
+- Have images in subfolders within `Images`
+- Run app with `ilya` or `python -m ilya`
+- Select the folder you want to label images for
+- Select an image
 - Click and drag a box around the desired area
-- Select proper label from the popup
+- Configure label using the popup
 - Repeat until finished with image
-- Press `Next` to move to the next image, or use the `Spacebar` shortcut
-- Labels are stored in the `Labels` subfolder
+- Labels are stored in the `data.csv` file in the current working directory
 
 
 # Data Format
