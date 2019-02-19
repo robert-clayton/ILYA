@@ -1,4 +1,3 @@
-import os
 import pandas as pd
 from PySide2.QtCore import QObject
 from . import ThemeManager
@@ -48,17 +47,16 @@ class BoxManager(QObject):
         self.dataFrame.to_csv(ThemeManager.DATA_PATH, index=False)
 
     def loadLabels(self):
-        if os.path.exists(ThemeManager.LABELS_PATH):
+        if not os.path.exists(ThemeManager.LABELS_PATH):
             print('Warning: Labels file not found in the current directory. ILYA will not function properly.')
-            with open(ThemeManager.LABELS_PATH, 'r') as labels:
-                return [label.strip() for label in labels]
-        else:
-            os.mknod(ThemeManager.LABELS_PATH)
+            open(ThemeManager.LABELS_PATH, 'w') as f:
+                f.write('default')
+        with open(ThemeManager.LABELS_PATH, 'r') as labels:
+            return [label.strip() for label in labels]
 
     def loadCSV(self):
         if not os.path.exists(ThemeManager.DATA_PATH):
             print('Warning: Data file not found in the current directory. ILYA will create an empty CSV.')
-            os.mknod(ThemeManager.DATA_PATH)
             with open(ThemeManager.DATA_PATH, 'w') as f:
                 f.write('ImageID,Source,LabelName,Confidence,XMin,XMax,YMin,YMax,IsOccluded,IsTruncated,IsGroupOf,IsDepiction,IsInside')
 
