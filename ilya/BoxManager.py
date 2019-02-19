@@ -49,7 +49,7 @@ class BoxManager(QObject):
     def loadLabels(self):
         if not os.path.exists(ThemeManager.LABELS_PATH):
             print('Warning: Labels file not found in the current directory. ILYA will not function properly.')
-            open(ThemeManager.LABELS_PATH, 'w') as f:
+            with open(ThemeManager.LABELS_PATH, 'w') as f:
                 f.write('default')
         with open(ThemeManager.LABELS_PATH, 'r') as labels:
             return [label.strip() for label in labels]
