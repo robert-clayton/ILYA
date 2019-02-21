@@ -1,6 +1,8 @@
-# Image Labels You Affix - ILYA [![](https://badgen.net/github/license/robert-clayton/ILYA)](https://github.com/robert-clayton/ILYA/edit/master/LICENSE.txt) [![](https://badgen.net/github/last-commit/robert-clayton/ILYA)](https://github.com/robert-clayton/ILYA/commits/master)
+# ILYA: Image Labels You Affix 
 
 A tool for labeling bounding boxes on images to be used for ML training.
+
+[![](https://badgen.net/github/license/robert-clayton/ILYA)](https://github.com/robert-clayton/ILYA/master/LICENSE.txt) [![](https://badgen.net/github/last-commit/robert-clayton/ILYA)](https://github.com/robert-clayton/ILYA/commits/master)
 
 # Requirements
 
