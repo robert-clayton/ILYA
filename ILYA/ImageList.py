@@ -22,8 +22,6 @@ class ImageList(QListView):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setItemDelegate(Thumbnail())
-        self.setLayoutMode(QListView.Batched)
-        self.setBatchSize(10)
         self.brush.setColor(ThemeManager.BG_QC)
         self.brush.setStyle(Qt.SolidPattern)
     
@@ -54,28 +52,35 @@ class Thumbnail(QStyledItemDelegate):
         self.reader = QImageReader()
 
     def sizeHint(self, option, index):
-        item = index.model().data(index, role=Qt.UserRole)
-        with Image.open(item) as img:
-            width, height = img.size
-        dx = option.rect.width() / width
-        height *= dx
-        size = QSize(option.rect.width(), height)
-        self.reader.setScaledSize(size)
-        return size
+        image = index.model().data(index, role=Qt.UserRole+1)
+        if image:
+            return image.size()
+        else:
+            item = index.model().data(index, role=Qt.UserRole)
+            with Image.open(item) as img:
+                width, height = img.size
+            dx = option.rect.width() / width
+            height *= dx
+            size = QSize(option.rect.width(), height)
+            self.reader.setScaledSize(size)
+            return size
 
     def paint(self, painter, option, index):
         painter.save()
-        item = index.model().data(index, role=Qt.UserRole)
 
-        self.reader.setFileName(item)
-        image = QPixmap.fromImageReader(self.reader)
-        painter.translate(option.rect.x(), option.rect.y())
+        image = index.model().data(index, role=Qt.UserRole+1)
+        if not image:
+            item = index.model().data(index, role=Qt.UserRole)
+            self.reader.setFileName(item)
+            image = QPixmap.fromImageReader(self.reader)
+            index.model().setData(index, image, role=Qt.UserRole+1)
 
         if option.state & (QStyle.State_Selected | QStyle.State_MouseOver):
             painter.setOpacity(1)
         else:
             painter.setOpacity(0.90)
-
+        
+        painter.translate(option.rect.x(), option.rect.y())
         painter.drawPixmap(0, 0, image)
         painter.restore()
 
