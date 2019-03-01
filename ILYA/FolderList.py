@@ -41,7 +41,8 @@ class FolderList(QListView):
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.LeftButton:
             index = self.indexAt(event.pos())
-            self.selectedFolderChanged.emit(index)
+            if index.isValid():
+                self.selectedFolderChanged.emit(index)
 
     def paintEvent(self, event):
         painter = QPainter(self.viewport())
